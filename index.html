@@ -154,6 +154,9 @@
             transition: transform 0.3s ease, opacity 0.3s ease, color 0.3s ease;
             z-index: 30;
             overflow: visible;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .audio-control:focus,
@@ -164,6 +167,10 @@
 
         .audio-control:hover {
             transform: scale(1.04);
+        }
+
+        .audio-control:active {
+            background: transparent;
         }
 
         .audio-control.paused {
