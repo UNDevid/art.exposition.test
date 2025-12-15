@@ -157,12 +157,15 @@
             -webkit-tap-highlight-color: transparent;
             -webkit-appearance: none;
             appearance: none;
+            background-color: transparent !important;
+            outline: none;
         }
 
         .audio-control:focus,
         .audio-control:focus-visible {
-            outline: none;
-            box-shadow: none;
+            outline: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
         }
 
         .audio-control:hover {
@@ -170,7 +173,11 @@
         }
 
         .audio-control:active {
-            background: transparent;
+            background: transparent !important;
+        }
+
+        .audio-control::-moz-focus-inner {
+            border: 0;
         }
 
         .audio-control.paused {
