@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000">
+    <title>L'Athanor dell'Alchimista</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transform: translateZ(0);
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(24px, 4vmin, 40px);
+        }
+
+        .image-wrapper {
+            position: relative;
+            width: min(70vmin, 500px);
+            max-height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cover-image {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            cursor: pointer;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .cover-image.loaded {
+            opacity: 1;
+        }
+
+        .cover-image.pressed {
+            transform: translateZ(0) scale(0.96);
+        }
+
+        /* Progress bar oraria - cornice schermo */
+        .progress-frame {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .progress-frame.visible {
+            opacity: 1;
+        }
+
+        .progress-frame svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .progress-stroke {
+            fill: none;
+            stroke: rgba(255, 200, 100, 0.45);
+            stroke-width: 5;
+            stroke-linecap: round;
+            stroke-dasharray: 10000 10000;
+            filter: drop-shadow(0 0 6px rgba(255, 200, 100, 0.4));
+            transition: stroke-dasharray 0.1s linear;
+            vector-effect: non-scaling-stroke;
+            transform: translateZ(0);
+        }
+
+        .glow-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .glow {
+            position: absolute;
+            bottom: -20%;
+            left: 50%;
+            transform: translateX(-50%) translateZ(0);
+            width: 120%;
+            height: 120%;
+            border-radius: 50%;
+            filter: blur(160px);
+            opacity: 0.4;
+            animation: tide 20s ease-in-out infinite;
+            mix-blend-mode: screen;
+            transition: opacity 1s ease, filter 1s ease;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .glow-1 {
+            background: radial-gradient(circle, var(--color-1, #ff6b6b) 0%, transparent 70%);
+            animation-delay: 0s;
+            animation-duration: 22s;
+        }
+
+        .glow-2 {
+            background: radial-gradient(circle, var(--color-2, #4ecdc4) 0%, transparent 70%);
+            animation-delay: 3s;
+            animation-duration: 25s;
+            width: 100%;
+        }
+
+        .glow-3 {
+            background: radial-gradient(circle, var(--color-3, #95e1d3) 0%, transparent 70%);
+            animation-delay: 6s;
+            animation-duration: 28s;
+            width: 110%;
+        }
+
+        @keyframes tide {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0) scale(1) rotate(0deg);
+                opacity: 0.35;
+            }
+
+            12.5% {
+                transform: translateX(-48%) translateY(-5%) scale(1.1) rotate(1deg);
+                opacity: 0.5;
+            }
+
+            25% {
+                transform: translateX(-52%) translateY(-3%) scale(1.05) rotate(-0.5deg);
+                opacity: 0.42;
+            }
+
+            37.5% {
+                transform: translateX(-47%) translateY(-8%) scale(1.15) rotate(1.5deg);
+                opacity: 0.55;
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-6%) scale(1.12) rotate(0.5deg);
+                opacity: 0.48;
+            }
+
+            62.5% {
+                transform: translateX(-53%) translateY(-4%) scale(1.08) rotate(-1deg);
+                opacity: 0.45;
+            }
+
+            75% {
+                transform: translateX(-49%) translateY(-9%) scale(1.18) rotate(1deg);
+                opacity: 0.58;
+            }
+
+            87.5% {
+                transform: translateX(-51%) translateY(-5%) scale(1.1) rotate(-0.5deg);
+                opacity: 0.5;
+            }
+        }
+
+        .audio-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: clamp(100px, 14vmin, 160px);
+            height: clamp(100px, 14vmin, 160px);
+            border-radius: 999px;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            font-size: clamp(32px, 5vmin, 56px);
+            color: rgba(255, 255, 255, 0.55);
+            background: transparent;
+            box-shadow: none;
+            transition: transform 0.3s ease, opacity 0.3s ease, color 0.3s ease;
+            z-index: 30;
+            overflow: visible;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-appearance: none;
+            appearance: none;
+            position: relative;
+        }
+
+        .audio-control:focus,
+        .audio-control:focus-visible {
+            outline: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+        .audio-control:hover {
+            transform: scale(1.04);
+        }
+
+        .audio-control:active {
+            background: transparent !important;
+        }
+
+        .audio-control::-moz-focus-inner {
+            border: 0;
+        }
+
+        .audio-control.paused {
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .audio-control.loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .audio-control .icon {
+            position: absolute;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            z-index: 2;
+        }
+
+        .audio-control .icon-play {
+            width: 0;
+            height: 0;
+            border-left: clamp(28px, 4.2vmin, 46px) solid currentColor;
+            border-top: clamp(20px, 3vmin, 32px) solid transparent;
+            border-bottom: clamp(20px, 3vmin, 32px) solid transparent;
+            opacity: 0;
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 1px currentColor);
+        }
+
+        .audio-control .icon-pause {
+            display: flex;
+            gap: clamp(6px, 0.8vmin, 10px);
+            width: clamp(22px, 3.2vmin, 34px);
+            height: clamp(32px, 4.5vmin, 46px);
+            opacity: 1;
+        }
+
+        .audio-control .icon-pause::before,
+        .audio-control .icon-pause::after {
+            content: '';
+            flex: 1;
+            border-radius: 3px;
+            background: currentColor;
+        }
+
+        .audio-control.paused .icon-play {
+            opacity: 1;
+        }
+
+        .audio-control.paused .icon-pause {
+            opacity: 0;
+        }
+
+        .loader {
+            position: absolute;
+            width: clamp(28px, 4vmin, 40px);
+            height: clamp(28px, 4vmin, 40px);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .audio-control.loading .loader {
+            opacity: 1;
+        }
+
+        .audio-control.loading .icon {
+            opacity: 0 !important;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple-animation 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(1.4);
+                opacity: 0;
+            }
+        }
+
+        .info-button {
+            position: absolute;
+            top: 5vh;
+            right: 5vh;
+            width: clamp(40px, 6vmin, 54px);
+            height: clamp(40px, 6vmin, 54px);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 60;
+            font-size: clamp(20px, 3vmin, 28px);
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .info-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .info-panel {
+            position: absolute;
+            top: 5vh;
+            right: 5vh;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: clamp(20px, 3vmin, 32px);
+            min-width: clamp(250px, 40vmin, 320px);
+            max-width: 90vw;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            z-index: 65;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .info-panel.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .info-panel h2 {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: clamp(18px, 2.8vmin, 24px);
+            margin-bottom: clamp(8px, 1.2vmin, 12px);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-weight: 600;
+        }
+
+        .info-panel p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: clamp(14px, 2vmin, 16px);
+            line-height: 1.5;
+            margin-bottom: clamp(6px, 1vmin, 10px);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        .info-panel p:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-panel strong {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .error-message {
+            position: absolute;
+            bottom: 15vh;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 59, 48, 0.9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            z-index: 40;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .error-message.visible {
+            opacity: 1;
+        }
+
+        @supports (-webkit-touch-callout: none) {
+
+            /* Solo iOS Safari */
+            .glow {
+                filter: blur(80px) !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .glow {
+                filter: blur(60px);
+            }
+
+            .info-button {
+                top: 4vh;
+                right: 4vh;
+            }
+
+            .info-panel {
+                top: 4vh;
+                right: 50%;
+                transform: translateX(50%) translateY(-10px);
+            }
+
+            .info-panel.visible {
+                transform: translateX(50%) translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Progress frame oraria -->
+    <div class="progress-frame" id="progressFrame">
+        <svg id="progressSvg" preserveAspectRatio="none">
+            <path id="progressPath" class="progress-stroke" />
+        </svg>
+    </div>
+
+    <div class="container">
+        <div class="image-wrapper">
+            <img src="images/opera_2.jpg" alt="Cover" class="cover-image" id="coverImage" loading="lazy">
+        </div>
+
+        <button class="audio-control paused loading" id="audioControl" aria-label="Riproduci traccia">
+            <span class="icon icon-play" aria-hidden="true"></span>
+            <span class="icon icon-pause" aria-hidden="true"></span>
+            <span class="loader"></span>
+        </button>
+    </div>
+
+    <button class="info-button" id="infoButton">i</button>
+
+    <div class="info-panel" id="infoPanel">
+        <h2 id="artworkTitle">Io Sono</h2>
+        <p><strong>Durata:</strong> <span id="audioDuration">--:--</span></p>
+        <p><strong>Esposizione:</strong> L'Athanor dell'Alchimista</p>
+    </div>
+
+    <div class="error-message" id="errorMessage">
+        Errore nel caricamento dell'audio
+    </div>
+
+    <div class="glow-container">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+        <div class="glow glow-3"></div>
+    </div>
+
+    <audio id="audioPlayer" preload="auto" loop>
+        <source src="audio/two.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Configurazione opera (modifica questi valori per ogni pagina)
+        const ARTWORK_CONFIG = {
+            title: "La Dualità",
+            audioSrc: "audio/two.mp3",
+            imageSrc: "images/opera_2.jpg",
+            exhibition: "L'Athanor dell'Alchimista"
+        };
+
+        const audio = document.getElementById('audioPlayer');
+        const audioControl = document.getElementById('audioControl');
+        const coverImage = document.getElementById('coverImage');
+        const progressFrame = document.getElementById('progressFrame');
+        const progressPath = document.getElementById('progressPath');
+        const progressSvg = document.getElementById('progressSvg');
+        const infoButton = document.getElementById('infoButton');
+        const infoPanel = document.getElementById('infoPanel');
+        const errorMessage = document.getElementById('errorMessage');
+
+        let colorsCache = null;
+        let infoPanelVisible = false;
+        let pathLength = 0;
+
+        // Crea path rettangolare preciso basato sulle dimensioni viewport
+        function updateProgressPath() {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            const margin = 0;
+
+            progressSvg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+            progressPath.setAttribute('d',
+                `M ${margin},${margin} L ${w - margin},${margin} L ${w - margin},${h - margin} L ${margin},${h - margin} L ${margin},${margin}`
+            );
+
+            pathLength = progressPath.getTotalLength();
+        }
+
+        // Update path on load and resize
+        window.addEventListener('load', updateProgressPath);
+        window.addEventListener('resize', updateProgressPath);
+
+        // Popola info panel
+        document.getElementById('artworkTitle').textContent = ARTWORK_CONFIG.title;
+
+        // Media Session API
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: ARTWORK_CONFIG.title,
+                album: ARTWORK_CONFIG.exhibition,
+                artwork: [
+                    { src: ARTWORK_CONFIG.imageSrc, sizes: '512x512', type: 'image/jpg' }
+                ]
+            });
+
+            navigator.mediaSession.setActionHandler('play', () => {
+                audio.play();
+            });
+
+            navigator.mediaSession.setActionHandler('pause', () => {
+                audio.pause();
+            });
+        }
+
+        function setButtonState(isPlaying) {
+            if (isPlaying) {
+                audioControl.classList.remove('paused');
+                audioControl.setAttribute('aria-label', 'Metti in pausa');
+            } else {
+                audioControl.classList.add('paused');
+                audioControl.setAttribute('aria-label', 'Riproduci traccia');
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('visible');
+            setTimeout(() => {
+                errorMessage.classList.remove('visible');
+            }, 4000);
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function createRipple(event) {
+            const ripple = document.createElement('span');
+            const button = audioControl;
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = rect.width / 2 - size / 2;
+            const y = rect.height / 2 - size / 2;
+
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.classList.add('ripple');
+
+            button.appendChild(ripple);
+
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+
+        // Audio events
+        audio.addEventListener('loadedmetadata', () => {
+            audioControl.classList.remove('loading');
+            document.getElementById('audioDuration').textContent = formatTime(audio.duration);
+        });
+
+        audio.addEventListener('canplay', () => {
+            audioControl.classList.remove('loading');
+        });
+
+        audio.addEventListener('waiting', () => {
+            audioControl.classList.add('loading');
+        });
+
+        audio.addEventListener('playing', () => {
+            audioControl.classList.remove('loading');
+            progressFrame.classList.add('visible');
+        });
+
+        audio.addEventListener('error', (e) => {
+            audioControl.classList.remove('loading');
+            let errorMsg = 'Errore nel caricamento dell\'audio';
+
+            if (audio.error) {
+                switch (audio.error.code) {
+                    case MediaError.MEDIA_ERR_ABORTED:
+                        errorMsg = 'Caricamento audio interrotto';
+                        break;
+                    case MediaError.MEDIA_ERR_NETWORK:
+                        errorMsg = 'Errore di rete';
+                        break;
+                    case MediaError.MEDIA_ERR_DECODE:
+                        errorMsg = 'Errore decodifica audio';
+                        break;
+                    case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+                        errorMsg = 'Formato audio non supportato';
+                        break;
+                }
+            }
+
+            showError(errorMsg);
+        });
+
+        // Update progress frame (oraria)
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration && pathLength > 0) {
+                const progress = audio.currentTime / audio.duration;
+                const dashLength = pathLength * progress;
+                progressPath.style.strokeDasharray = `${dashLength} ${pathLength}`;
+            }
+        });
+
+        audio.addEventListener('ended', () => {
+            audio.currentTime = 0;
+            audio.play();
+        });
+
+        // Audio control click
+        audioControl.addEventListener('click', async (e) => {
+            createRipple(e);
+
+            if (audio.paused) {
+                try {
+                    await audio.play();
+                    setButtonState(true);
+                } catch (error) {
+                    console.warn('Riproduzione bloccata:', error);
+                    showError('Impossibile riprodurre l\'audio');
+                }
+            } else {
+                audio.pause();
+                setButtonState(false);
+            }
+        });
+
+        // Info button toggle
+        infoButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            infoPanelVisible = !infoPanelVisible;
+            infoPanel.classList.toggle('visible', infoPanelVisible);
+        });
+
+        // Touch effect sulla cover (solo mobile)
+        let touchTimeout;
+
+        coverImage.addEventListener('touchstart', (e) => {
+            coverImage.classList.add('pressed');
+
+            touchTimeout = setTimeout(() => {
+                coverImage.classList.remove('pressed');
+            }, 150);
+        });
+
+        coverImage.addEventListener('touchend', () => {
+            clearTimeout(touchTimeout);
+            setTimeout(() => {
+                coverImage.classList.remove('pressed');
+            }, 100);
+        });
+
+        coverImage.addEventListener('touchcancel', () => {
+            clearTimeout(touchTimeout);
+            coverImage.classList.remove('pressed');
+        });
+
+        // Close info panel when clicking outside
+        document.addEventListener('click', (e) => {
+            if (infoPanelVisible && !infoPanel.contains(e.target) && e.target !== infoButton) {
+                infoPanelVisible = false;
+                infoPanel.classList.remove('visible');
+            }
+        });
+
+        // Extract colors from image
+        function extractColors() {
+            if (colorsCache) {
+                applyColors(colorsCache);
+                return;
+            }
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.src = coverImage.src;
+
+            img.onload = () => {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const colors = getProminentColors(imageData);
+
+                colorsCache = colors;
+                applyColors(colors);
+            };
+        }
+
+        function applyColors(colors) {
+            document.documentElement.style.setProperty('--color-1', colors[0]);
+            document.documentElement.style.setProperty('--color-2', colors[1]);
+            document.documentElement.style.setProperty('--color-3', colors[2]);
+        }
+
+        function getProminentColors(imageData) {
+            const data = imageData.data;
+            const colorMap = {};
+
+            for (let i = 0; i < data.length; i += 80) {
+                const r = Math.round(data[i] / 30) * 30;
+                const g = Math.round(data[i + 1] / 30) * 30;
+                const b = Math.round(data[i + 2] / 30) * 30;
+                const rgb = `rgb(${r},${g},${b})`;
+                colorMap[rgb] = (colorMap[rgb] || 0) + 1;
+            }
+
+            const sorted = Object.entries(colorMap)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 3)
+                .map(entry => entry[0]);
+
+            return sorted.length >= 3 ? sorted : ['#ff6b6b', '#4ecdc4', '#95e1d3'];
+        }
+
+        // Image load handling
+        coverImage.addEventListener('load', () => {
+            coverImage.classList.add('loaded');
+            extractColors();
+        });
+
+        coverImage.addEventListener('error', () => {
+            showError('Errore nel caricamento dell\'immagine');
+        });
+
+        if (coverImage.complete) {
+            coverImage.classList.add('loaded');
+            extractColors();
+        }
+
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => console.log('SW registered'))
+                    .catch(err => console.log('SW registration failed'));
+            });
+        }
+    </script>
+</body>
+
+</html>
