@@ -103,7 +103,7 @@
             stroke: rgba(255, 200, 100, 0.45);
             stroke-width: 5;
             stroke-linecap: round;
-            stroke-dasharray: 0 10000;
+            stroke-dasharray: 10000 10000;
             filter: drop-shadow(0 0 6px rgba(255, 200, 100, 0.4));
             transition: stroke-dasharray 0.1s linear;
             vector-effect: non-scaling-stroke;
@@ -433,6 +433,14 @@
 
         .error-message.visible {
             opacity: 1;
+        }
+
+        @supports (-webkit-touch-callout: none) {
+
+            /* Solo iOS Safari */
+            .glow {
+                filter: blur(80px) !important;
+            }
         }
 
         @media (max-width: 768px) {
