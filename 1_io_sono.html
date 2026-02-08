@@ -24,6 +24,7 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            transform: translateZ(0);
         }
 
         .container {
@@ -56,11 +57,19 @@
             position: relative;
             z-index: 20;
             opacity: 0;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.4s ease, transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            cursor: pointer;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
         .cover-image.loaded {
             opacity: 1;
+        }
+
+        .cover-image.pressed {
+            transform: translateZ(0) scale(0.96);
         }
 
         /* Progress bar oraria - cornice schermo */
@@ -74,6 +83,9 @@
             z-index: 50;
             opacity: 0;
             transition: opacity 0.5s ease;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
         .progress-frame.visible {
@@ -94,6 +106,7 @@
             filter: drop-shadow(0 0 6px rgba(255, 200, 100, 0.4));
             transition: stroke-dasharray 0.1s linear;
             vector-effect: non-scaling-stroke;
+            transform: translateZ(0);
         }
 
         .glow-container {
@@ -110,7 +123,7 @@
             position: absolute;
             bottom: -20%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateZ(0);
             width: 120%;
             height: 120%;
             border-radius: 50%;
@@ -119,6 +132,8 @@
             animation: tide 20s ease-in-out infinite;
             mix-blend-mode: screen;
             transition: opacity 1s ease, filter 1s ease;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
         .glow-1 {
@@ -142,43 +157,34 @@
         }
 
         @keyframes tide {
-
-            0%,
-            100% {
+            0%, 100% {
                 transform: translateX(-50%) translateY(0) scale(1) rotate(0deg);
                 opacity: 0.35;
             }
-
             12.5% {
                 transform: translateX(-48%) translateY(-5%) scale(1.1) rotate(1deg);
                 opacity: 0.5;
             }
-
             25% {
                 transform: translateX(-52%) translateY(-3%) scale(1.05) rotate(-0.5deg);
                 opacity: 0.42;
             }
-
             37.5% {
                 transform: translateX(-47%) translateY(-8%) scale(1.15) rotate(1.5deg);
                 opacity: 0.55;
             }
-
             50% {
                 transform: translateX(-50%) translateY(-6%) scale(1.12) rotate(0.5deg);
                 opacity: 0.48;
             }
-
             62.5% {
                 transform: translateX(-53%) translateY(-4%) scale(1.08) rotate(-1deg);
                 opacity: 0.45;
             }
-
             75% {
                 transform: translateX(-49%) translateY(-9%) scale(1.18) rotate(1deg);
                 opacity: 0.58;
             }
-
             87.5% {
                 transform: translateX(-51%) translateY(-5%) scale(1.1) rotate(-0.5deg);
                 opacity: 0.5;
@@ -205,8 +211,6 @@
             -webkit-tap-highlight-color: transparent;
             -webkit-appearance: none;
             appearance: none;
-            background-color: transparent !important;
-            outline: none;
             position: relative;
         }
 
@@ -420,25 +424,6 @@
             opacity: 1;
         }
 
-        .cover-image {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            position: relative;
-            z-index: 20;
-            opacity: 0;
-            transition: opacity 0.4s ease, transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
-            cursor: pointer;
-        }
-
-        .cover-image.pressed {
-            transform: scale(0.96);
-        }
-
         @media (max-width: 768px) {
             .glow {
                 filter: blur(60px);
@@ -531,7 +516,7 @@
         function updateProgressPath() {
             const w = window.innerWidth;
             const h = window.innerHeight;
-            const margin = 0; // Margine dal bordo
+            const margin = 0;
 
             progressSvg.setAttribute('viewBox', `0 0 ${w} ${h}`);
             progressPath.setAttribute('d',
@@ -540,7 +525,6 @@
 
             pathLength = progressPath.getTotalLength();
         }
-
 
         // Update path on load and resize
         window.addEventListener('load', updateProgressPath);
@@ -700,7 +684,6 @@
         coverImage.addEventListener('touchstart', (e) => {
             coverImage.classList.add('pressed');
 
-            // Auto-rimuovi dopo 150ms se l'utente tiene premuto
             touchTimeout = setTimeout(() => {
                 coverImage.classList.remove('pressed');
             }, 150);
@@ -762,7 +745,6 @@
             const data = imageData.data;
             const colorMap = {};
 
-            // Ridotto sampling per performance
             for (let i = 0; i < data.length; i += 80) {
                 const r = Math.round(data[i] / 30) * 30;
                 const g = Math.round(data[i + 1] / 30) * 30;
