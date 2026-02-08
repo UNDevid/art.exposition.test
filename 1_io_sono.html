@@ -420,6 +420,25 @@
             opacity: 1;
         }
 
+        .cover-image {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .cover-image.pressed {
+            transform: scale(0.96);
+        }
+
         @media (max-width: 768px) {
             .glow {
                 filter: blur(60px);
@@ -672,6 +691,30 @@
             e.stopPropagation();
             infoPanelVisible = !infoPanelVisible;
             infoPanel.classList.toggle('visible', infoPanelVisible);
+        });
+
+        // Touch effect sulla cover (solo mobile)
+        let touchTimeout;
+
+        coverImage.addEventListener('touchstart', (e) => {
+            coverImage.classList.add('pressed');
+
+            // Auto-rimuovi dopo 150ms se l'utente tiene premuto
+            touchTimeout = setTimeout(() => {
+                coverImage.classList.remove('pressed');
+            }, 150);
+        });
+
+        coverImage.addEventListener('touchend', () => {
+            clearTimeout(touchTimeout);
+            setTimeout(() => {
+                coverImage.classList.remove('pressed');
+            }, 100);
+        });
+
+        coverImage.addEventListener('touchcancel', () => {
+            clearTimeout(touchTimeout);
+            coverImage.classList.remove('pressed');
         });
 
         // Close info panel when clicking outside
