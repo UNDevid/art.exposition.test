@@ -24,6 +24,7 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            transform: translateZ(0);
         }
 
         .container {
@@ -40,7 +41,6 @@
             position: relative;
             width: min(70vmin, 500px);
             max-height: 85vh;
-            /* Massimo 85% dell'altezza dello schermo */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -57,39 +57,57 @@
             position: relative;
             z-index: 20;
             opacity: 0;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.4s ease, transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            cursor: pointer;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .cover-image.loaded {
             opacity: 1;
         }
 
-        .progress-bar {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 500px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.15);
-            z-index: 25;
-            border-radius: 0 0 20px 20px;
-            overflow: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+        .cover-image.pressed {
+            transform: translateZ(0) scale(0.96);
         }
 
-        .progress-bar.visible {
+        /* Progress bar oraria - cornice schermo */
+        .progress-frame {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .progress-frame.visible {
             opacity: 1;
         }
 
-        .progress-fill {
+        .progress-frame svg {
+            width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 1));
-            width: 0%;
-            transition: width 0.1s linear;
-            box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+
+        .progress-stroke {
+            fill: none;
+            stroke: rgba(255, 200, 100, 0.45);
+            stroke-width: 5;
+            stroke-linecap: round;
+            stroke-dasharray: 10000 10000;
+            filter: drop-shadow(0 0 6px rgba(255, 200, 100, 0.4));
+            transition: stroke-dasharray 0.1s linear;
+            vector-effect: non-scaling-stroke;
+            transform: translateZ(0);
         }
 
         .glow-container {
@@ -106,7 +124,7 @@
             position: absolute;
             bottom: -20%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateZ(0);
             width: 120%;
             height: 120%;
             border-radius: 50%;
@@ -115,6 +133,8 @@
             animation: tide 20s ease-in-out infinite;
             mix-blend-mode: screen;
             transition: opacity 1s ease, filter 1s ease;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
         .glow-1 {
@@ -181,18 +201,17 @@
             }
         }
 
-
         .audio-control {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: clamp(80px, 12vmin, 140px);
-            height: clamp(80px, 12vmin, 140px);
+            width: clamp(100px, 14vmin, 160px);
+            height: clamp(100px, 14vmin, 160px);
             border-radius: 999px;
             border: none;
             outline: none;
             cursor: pointer;
-            font-size: clamp(28px, 4vmin, 48px);
+            font-size: clamp(32px, 5vmin, 56px);
             color: rgba(255, 255, 255, 0.55);
             background: transparent;
             box-shadow: none;
@@ -202,8 +221,6 @@
             -webkit-tap-highlight-color: transparent;
             -webkit-appearance: none;
             appearance: none;
-            background-color: transparent !important;
-            outline: none;
             position: relative;
         }
 
@@ -245,18 +262,19 @@
         .audio-control .icon-play {
             width: 0;
             height: 0;
-            border-left: clamp(26px, 3.8vmin, 42px) solid currentColor;
-            border-top: clamp(18px, 2.6vmin, 28px) solid transparent;
-            border-bottom: clamp(18px, 2.6vmin, 28px) solid transparent;
+            border-left: clamp(28px, 4.2vmin, 46px) solid currentColor;
+            border-top: clamp(20px, 3vmin, 32px) solid transparent;
+            border-bottom: clamp(20px, 3vmin, 32px) solid transparent;
             opacity: 0;
             transform: scale(1.05);
+            filter: drop-shadow(0 0 1px currentColor);
         }
 
         .audio-control .icon-pause {
             display: flex;
-            gap: clamp(4px, 0.6vmin, 8px);
-            width: clamp(18px, 2.6vmin, 28px);
-            height: clamp(26px, 3.6vmin, 38px);
+            gap: clamp(6px, 0.8vmin, 10px);
+            width: clamp(22px, 3.2vmin, 34px);
+            height: clamp(32px, 4.5vmin, 46px);
             opacity: 1;
         }
 
@@ -278,8 +296,8 @@
 
         .loader {
             position: absolute;
-            width: clamp(24px, 3.5vmin, 36px);
-            height: clamp(24px, 3.5vmin, 36px);
+            width: clamp(28px, 4vmin, 40px);
+            height: clamp(28px, 4vmin, 40px);
             border: 3px solid rgba(255, 255, 255, 0.2);
             border-top-color: rgba(255, 255, 255, 0.8);
             border-radius: 50%;
@@ -322,10 +340,10 @@
 
         .info-button {
             position: absolute;
-            top: 3vh;
-            right: 3vh;
-            width: clamp(40px, 6vmin, 56px);
-            height: clamp(40px, 6vmin, 56px);
+            top: 5vh;
+            right: 5vh;
+            width: clamp(40px, 6vmin, 54px);
+            height: clamp(40px, 6vmin, 54px);
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -335,11 +353,12 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            z-index: 30;
+            z-index: 60;
             font-size: clamp(20px, 3vmin, 28px);
             color: rgba(255, 255, 255, 0.8);
             font-weight: 600;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .info-button:hover {
@@ -349,8 +368,8 @@
 
         .info-panel {
             position: absolute;
-            top: 3vh;
-            right: 3vh;
+            top: 5vh;
+            right: 5vh;
             background: rgba(20, 20, 20, 0.95);
             backdrop-filter: blur(20px);
             border-radius: 16px;
@@ -358,7 +377,7 @@
             min-width: clamp(250px, 40vmin, 320px);
             max-width: 90vw;
             border: 1px solid rgba(255, 255, 255, 0.15);
-            z-index: 35;
+            z-index: 65;
             opacity: 0;
             pointer-events: none;
             transform: translateY(-10px);
@@ -416,17 +435,26 @@
             opacity: 1;
         }
 
-        @media (max-width: 768px) {
-            .image-wrapper {
-                width: 80vmin;
-                height: 80vmin;
-            }
+        @supports (-webkit-touch-callout: none) {
 
+            /* Solo iOS Safari */
+            .glow {
+                filter: blur(80px) !important;
+            }
+        }
+
+        @media (max-width: 768px) {
             .glow {
                 filter: blur(60px);
             }
 
+            .info-button {
+                top: 4vh;
+                right: 4vh;
+            }
+
             .info-panel {
+                top: 4vh;
                 right: 50%;
                 transform: translateX(50%) translateY(-10px);
             }
@@ -439,12 +467,16 @@
 </head>
 
 <body>
+    <!-- Progress frame oraria -->
+    <div class="progress-frame" id="progressFrame">
+        <svg id="progressSvg" preserveAspectRatio="none">
+            <path id="progressPath" class="progress-stroke" />
+        </svg>
+    </div>
+
     <div class="container">
         <div class="image-wrapper">
-            <img src="images/briefly.png" alt="Cover" class="cover-image" id="coverImage" loading="lazy">
-            <div class="progress-bar" id="progressBar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
+            <img src="images/opera_5.jpg" alt="Cover" class="cover-image" id="coverImage" loading="lazy">
         </div>
 
         <button class="audio-control paused loading" id="audioControl" aria-label="Riproduci traccia">
@@ -457,8 +489,7 @@
     <button class="info-button" id="infoButton">i</button>
 
     <div class="info-panel" id="infoPanel">
-        <h2 id="artworkTitle">Music for Animals</h2>
-        <p><strong>Artista:</strong> <span id="artistName">Nils Frahm</span></p>
+        <h2 id="artworkTitle">Io Sono</h2>
         <p><strong>Durata:</strong> <span id="audioDuration">--:--</span></p>
         <p><strong>Esposizione:</strong> L'Athanor dell'Alchimista</p>
     </div>
@@ -474,42 +505,59 @@
     </div>
 
     <audio id="audioPlayer" preload="auto" loop>
-        <source src="audio/briefly.mp3" type="audio/mpeg">
+        <source src="audio/five.mp3" type="audio/mpeg">
     </audio>
 
     <script>
         const ARTWORK_CONFIG = {
-            title: "Briefly",
-            artist: "Nils Frahm",
-            audioSrc: "audio/briefly.mp3",
-            imageSrc: "images/briefly.png",
+            title: "Io Esploro",
+            audioSrc: "audio/five.mp3",
+            imageSrc: "images/opera_5.jpg",
             exhibition: "L'Athanor dell'Alchimista"
         };
 
         const audio = document.getElementById('audioPlayer');
         const audioControl = document.getElementById('audioControl');
         const coverImage = document.getElementById('coverImage');
-        const progressBar = document.getElementById('progressBar');
-        const progressFill = document.getElementById('progressFill');
+        const progressFrame = document.getElementById('progressFrame');
+        const progressPath = document.getElementById('progressPath');
+        const progressSvg = document.getElementById('progressSvg');
         const infoButton = document.getElementById('infoButton');
         const infoPanel = document.getElementById('infoPanel');
         const errorMessage = document.getElementById('errorMessage');
 
         let colorsCache = null;
         let infoPanelVisible = false;
+        let pathLength = 0;
+
+        // Crea path rettangolare preciso basato sulle dimensioni viewport
+        function updateProgressPath() {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            const margin = 0;
+
+            progressSvg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+            progressPath.setAttribute('d',
+                `M ${margin},${margin} L ${w - margin},${margin} L ${w - margin},${h - margin} L ${margin},${h - margin} L ${margin},${margin}`
+            );
+
+            pathLength = progressPath.getTotalLength();
+        }
+
+        // Update path on load and resize
+        window.addEventListener('load', updateProgressPath);
+        window.addEventListener('resize', updateProgressPath);
 
         // Popola info panel
         document.getElementById('artworkTitle').textContent = ARTWORK_CONFIG.title;
-        document.getElementById('artistName').textContent = ARTWORK_CONFIG.artist;
 
         // Media Session API
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: ARTWORK_CONFIG.title,
-                artist: ARTWORK_CONFIG.artist,
                 album: ARTWORK_CONFIG.exhibition,
                 artwork: [
-                    { src: ARTWORK_CONFIG.imageSrc, sizes: '512x512', type: 'image/png' }
+                    { src: ARTWORK_CONFIG.imageSrc, sizes: '512x512', type: 'image/jpg' }
                 ]
             });
 
@@ -582,7 +630,7 @@
 
         audio.addEventListener('playing', () => {
             audioControl.classList.remove('loading');
-            progressBar.classList.add('visible');
+            progressFrame.classList.add('visible');
         });
 
         audio.addEventListener('error', (e) => {
@@ -609,10 +657,12 @@
             showError(errorMsg);
         });
 
+        // Update progress frame (oraria)
         audio.addEventListener('timeupdate', () => {
-            if (audio.duration) {
-                const progress = (audio.currentTime / audio.duration) * 100;
-                progressFill.style.width = `${progress}%`;
+            if (audio.duration && pathLength > 0) {
+                const progress = audio.currentTime / audio.duration;
+                const dashLength = pathLength * progress;
+                progressPath.style.strokeDasharray = `${dashLength} ${pathLength}`;
             }
         });
 
@@ -644,6 +694,29 @@
             e.stopPropagation();
             infoPanelVisible = !infoPanelVisible;
             infoPanel.classList.toggle('visible', infoPanelVisible);
+        });
+
+        // Touch effect sulla cover (solo mobile)
+        let touchTimeout;
+
+        coverImage.addEventListener('touchstart', (e) => {
+            coverImage.classList.add('pressed');
+
+            touchTimeout = setTimeout(() => {
+                coverImage.classList.remove('pressed');
+            }, 150);
+        });
+
+        coverImage.addEventListener('touchend', () => {
+            clearTimeout(touchTimeout);
+            setTimeout(() => {
+                coverImage.classList.remove('pressed');
+            }, 100);
+        });
+
+        coverImage.addEventListener('touchcancel', () => {
+            clearTimeout(touchTimeout);
+            coverImage.classList.remove('pressed');
         });
 
         // Close info panel when clicking outside
@@ -690,7 +763,6 @@
             const data = imageData.data;
             const colorMap = {};
 
-            // Ridotto sampling per performance
             for (let i = 0; i < data.length; i += 80) {
                 const r = Math.round(data[i] / 30) * 30;
                 const g = Math.round(data[i + 1] / 30) * 30;
