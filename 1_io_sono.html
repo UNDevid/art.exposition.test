@@ -62,6 +62,7 @@
             transform: translateZ(0);
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .cover-image.loaded {
@@ -157,34 +158,43 @@
         }
 
         @keyframes tide {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translateX(-50%) translateY(0) scale(1) rotate(0deg);
                 opacity: 0.35;
             }
+
             12.5% {
                 transform: translateX(-48%) translateY(-5%) scale(1.1) rotate(1deg);
                 opacity: 0.5;
             }
+
             25% {
                 transform: translateX(-52%) translateY(-3%) scale(1.05) rotate(-0.5deg);
                 opacity: 0.42;
             }
+
             37.5% {
                 transform: translateX(-47%) translateY(-8%) scale(1.15) rotate(1.5deg);
                 opacity: 0.55;
             }
+
             50% {
                 transform: translateX(-50%) translateY(-6%) scale(1.12) rotate(0.5deg);
                 opacity: 0.48;
             }
+
             62.5% {
                 transform: translateX(-53%) translateY(-4%) scale(1.08) rotate(-1deg);
                 opacity: 0.45;
             }
+
             75% {
                 transform: translateX(-49%) translateY(-9%) scale(1.18) rotate(1deg);
                 opacity: 0.58;
             }
+
             87.5% {
                 transform: translateX(-51%) translateY(-5%) scale(1.1) rotate(-0.5deg);
                 opacity: 0.5;
@@ -332,8 +342,8 @@
             position: absolute;
             top: 5vh;
             right: 5vh;
-            width: clamp(44px, 6.5vmin, 60px);
-            height: clamp(44px, 6.5vmin, 60px);
+            width: clamp(40px, 6vmin, 54px);
+            height: clamp(40px, 6vmin, 54px);
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -344,10 +354,11 @@
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 60;
-            font-size: clamp(22px, 3.2vmin, 30px);
+            font-size: clamp(20px, 3vmin, 28px);
             color: rgba(255, 255, 255, 0.8);
             font-weight: 600;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .info-button:hover {
