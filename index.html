@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#000000">
     <title>L'Athanor dell'Alchimista</title>
-    <link rel="manifest" href="manifest.json">
     <style>
         * {
             margin: 0;
@@ -722,14 +721,6 @@
             extractColors();
         }
 
-        // Register Service Worker for PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(registration => console.log('SW registered'))
-                    .catch(err => console.log('SW registration failed'));
-            });
-        }
     </script>
 </body>
 
