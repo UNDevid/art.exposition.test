@@ -102,11 +102,12 @@
             stroke: rgba(255, 200, 100, 0.45);
             stroke-width: 5;
             stroke-linecap: round;
-            stroke-dasharray: 10000 10000;
+            stroke-dasharray: 0 10000;
             filter: drop-shadow(0 0 6px rgba(255, 200, 100, 0.4));
-            transition: stroke-dasharray 0.1s linear;
             vector-effect: non-scaling-stroke;
             transform: translateZ(0);
+            will-change: stroke-dasharray;
+            transition: none;
         }
 
         .glow-container {
@@ -462,6 +463,54 @@
                 transform: translateX(50%) translateY(0);
             }
         }
+
+        /* Landscape mobile optimization */
+        @media (max-width: 932px) and (orientation: landscape) {
+            .container {
+                flex-direction: row;
+                gap: clamp(16px, 3vmin, 24px);
+                max-width: 90vw;
+            }
+
+            .image-wrapper {
+                width: min(50vmin, 400px);
+                max-height: 75vh;
+            }
+
+            .audio-control {
+                width: clamp(70px, 10vmin, 100px);
+                height: clamp(70px, 10vmin, 100px);
+            }
+
+            .audio-control .icon-play {
+                border-left: clamp(22px, 3.5vmin, 36px) solid currentColor;
+                border-top: clamp(16px, 2.5vmin, 26px) solid transparent;
+                border-bottom: clamp(16px, 2.5vmin, 26px) solid transparent;
+            }
+
+            .audio-control .icon-pause {
+                width: clamp(18px, 2.8vmin, 28px);
+                height: clamp(26px, 3.8vmin, 36px);
+            }
+
+            .info-button {
+                top: 3vh;
+                right: 3vh;
+                width: clamp(36px, 5.5vmin, 48px);
+                height: clamp(36px, 5.5vmin, 48px);
+                font-size: clamp(18px, 2.8vmin, 24px);
+            }
+
+            .info-panel {
+                top: 3vh;
+                right: 3vh;
+                max-width: 40vw;
+            }
+
+            .error-message {
+                bottom: 10vh;
+            }
+        }
     </style>
 </head>
 
@@ -546,6 +595,15 @@
         // Update path on load and resize
         window.addEventListener('load', updateProgressPath);
         window.addEventListener('resize', updateProgressPath);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                updateProgressPath();
+
+                document.body.style.display = 'none';
+                document.body.offsetHeight;
+                document.body.style.display = 'flex';
+            }, 100);
+        });
 
         // Popola info panel
         document.getElementById('artworkTitle').textContent = ARTWORK_CONFIG.title;
@@ -656,18 +714,60 @@
             showError(errorMsg);
         });
 
-        // Update progress frame (oraria)
-        audio.addEventListener('timeupdate', () => {
-            if (audio.duration && pathLength > 0) {
+        // Progress bar ottimizzata con requestAnimationFrame + interpolazione
+        let rafId = null;
+        let startTime = null;
+        let startProgress = 0;
+
+        function smoothUpdateProgress(timestamp) {
+            if (!startTime) startTime = timestamp;
+
+            if (audio.duration && pathLength > 0 && !audio.paused) {
                 const progress = audio.currentTime / audio.duration;
-                const dashLength = pathLength * progress;
-                progressPath.style.strokeDasharray = `${dashLength} ${pathLength}`;
+
+                // Interpolazione smooth
+                const targetDash = pathLength * progress;
+                const currentDashArray = progressPath.style.strokeDasharray.split(' ')[0];
+                const currentDash = parseFloat(currentDashArray) || 0;
+
+                // Lerp per smooth transition
+                const smoothDash = currentDash + (targetDash - currentDash) * 0.3;
+
+                progressPath.style.strokeDasharray = `${smoothDash} ${pathLength}`;
+
+                rafId = requestAnimationFrame(smoothUpdateProgress);
+            }
+        }
+
+        audio.addEventListener('play', () => {
+            audioControl.classList.remove('loading');
+            progressFrame.classList.add('visible');
+            startTime = null;
+            if (!rafId) {
+                rafId = requestAnimationFrame(smoothUpdateProgress);
+            }
+        });
+
+        audio.addEventListener('pause', () => {
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+                rafId = null;
+                startTime = null;
             }
         });
 
         audio.addEventListener('ended', () => {
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+                rafId = null;
+                startTime = null;
+            }
             audio.currentTime = 0;
             audio.play();
+        });
+
+        audio.addEventListener('seeking', () => {
+            startTime = null;
         });
 
         // Audio control click
