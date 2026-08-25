@@ -279,12 +279,6 @@
             pointer-events: none;
         }
 
-        /* Icona play/pausa: morph CSS puro tramite clip-path.
-           I due poligoni sono calcolati come intersezione esatta di un vero
-           triangolo (vertici 15,10 / 15,90 / 85,50) tagliato da una retta
-           verticale a x=55%: condividendo gli stessi due punti di taglio,
-           l'unione delle due metà produce un bordo diagonale continuo,
-           senza spigoli visibili nella cucitura centrale. */
         .icon-morph {
             position: relative;
             width: clamp(34px, 5vmin, 50px);
@@ -381,6 +375,11 @@
             gap: clamp(10px, 2vmin, 16px);
         }
 
+        .info-button-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+
         .info-button {
             flex-shrink: 0;
             width: clamp(40px, 6vmin, 54px);
@@ -405,6 +404,45 @@
         .info-button:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.05);
+        }
+
+        /* Badge musicale: piccolo indicatore sul bottone Info che segnala la
+           presenza del credito musicale nel pannello. Fa un singolo, discreto
+           "respiro" (pulse) alcune volte al primo caricamento e poi si ferma
+           per sempre; scompare definitivamente al primo click sul bottone. */
+        .info-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: clamp(12px, 1.8vmin, 16px);
+            height: clamp(12px, 1.8vmin, 16px);
+            border-radius: 50%;
+            background: rgba(255, 200, 100, 0.9);
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6);
+            pointer-events: none;
+            opacity: 0;
+            transform: scale(0.6);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .info-badge.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .info-badge.pulsing {
+            animation: badge-pulse 1.8s ease-in-out 3;
+        }
+
+        @keyframes badge-pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6), 0 0 0 0 rgba(255, 200, 100, 0.5);
+            }
+            50% {
+                transform: scale(1.18);
+                box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6), 0 0 0 6px rgba(255, 200, 100, 0);
+            }
         }
 
         .info-panel {
@@ -564,6 +602,11 @@
             -webkit-tap-highlight-color: transparent;
             z-index: 30;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
         }
 
         .switch-thumb {
@@ -604,8 +647,6 @@
             color: rgba(0, 0, 0, 0.85);
         }
 
-        /* Capitoli traccia mindfulness: riga di chip compatti sotto lo switch,
-           visibile solo quando la modalità attiva è "mindfulness". */
         .chapters-row {
             display: flex;
             gap: clamp(6px, 1.2vmin, 10px);
@@ -616,6 +657,11 @@
             transition: max-height 0.35s ease, opacity 0.3s ease, transform 0.3s ease, margin-top 0.35s ease;
             margin-top: 0;
             width: clamp(220px, 32vmin, 280px);
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
         }
 
         .chapters-row.visible {
@@ -641,6 +687,11 @@
             cursor: pointer;
             white-space: nowrap;
             -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
             transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
         }
 
@@ -653,6 +704,20 @@
             background: rgba(255, 255, 255, 0.9);
             color: rgba(0, 0, 0, 0.85);
             border-color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Credito musicale fisso: piccola scritta discreta, sempre visibile,
+           posizionata vicino ai loghi già presenti in top bar per rinforzare
+           (non duplicare) il credito, senza aggiungere un secondo blocco
+           visivo separato altrove nella pagina. */
+        .band-credit {
+            font-size: clamp(9px, 1.3vmin, 11px);
+            color: rgba(255, 255, 255, 0.45);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-weight: 500;
+            white-space: nowrap;
+            margin-left: clamp(4px, 0.8vmin, 8px);
+            letter-spacing: 0.01em;
         }
 
         @supports (-webkit-touch-callout: none) {
@@ -684,6 +749,10 @@
 
             .band-logo {
                 height: clamp(44px, 9vmin, 60px);
+            }
+
+            .band-credit {
+                display: none;
             }
         }
 
@@ -754,6 +823,10 @@
                 height: clamp(30px, 6vmin, 42px);
             }
 
+            .band-credit {
+                display: none;
+            }
+
             .track-switch {
                 width: clamp(180px, 26vmin, 230px);
                 height: clamp(38px, 5.5vmin, 46px);
@@ -781,8 +854,12 @@
         <div class="band-logos">
             <img src="images/logo_1.png" alt="Armonie di Gran Classe 1" class="band-logo force-white">
             <img src="images/logo_2.png" alt="Armonie di Gran Classe 2" class="band-logo">
+            <span class="band-credit">Musiche di Trio Armonie di Gran Classe</span>
         </div>
-        <button class="info-button" id="infoButton">i</button>
+        <div class="info-button-wrapper">
+            <button class="info-button" id="infoButton">i</button>
+            <span class="info-badge" id="infoBadge"></span>
+        </div>
     </div>
 
     <div class="container">
@@ -805,13 +882,12 @@
                 <span class="track-label label-mindfulness">Mindfulness</span>
             </div>
 
-            <!-- Capitoli, visibili solo in modalità mindfulness -->
             <div class="chapters-row" id="chaptersRow"></div>
         </div>
     </div>
 
     <div class="info-panel" id="infoPanel">
-        <h2 id="artworkTitle">Io Sono</h2>
+        <h2 id="artworkTitle">Il Genio</h2>
         <p><strong>Artista:</strong> Elisa Aiassa</p>
         <p><strong>Durata:</strong> <span id="audioDuration">--:--</span></p>
 
@@ -855,8 +931,6 @@
             imageSrcFull: "images/opera_11.png",
             imageSrcMindfulness: "images/opera_11_mindfulness.png",
             exhibition: "L'alfabeto numerico dell'esistenza",
-            // Timestamp (in secondi) dei 4 capitoli della traccia mindfulness.
-            // Da personalizzare per ogni quadro in base alla durata reale delle sezioni.
             mindfulnessChapters: [
                 { label: "Intro", time: 0 },
                 { label: "Esercizio", time: 120 },
@@ -873,6 +947,7 @@
         const progressPath = document.getElementById('progressPath');
         const progressSvg = document.getElementById('progressSvg');
         const infoButton = document.getElementById('infoButton');
+        const infoBadge = document.getElementById('infoBadge');
         const infoPanel = document.getElementById('infoPanel');
         const errorMessage = document.getElementById('errorMessage');
         const trackSwitch = document.getElementById('trackSwitch');
@@ -884,6 +959,23 @@
 
         let currentMode = 'full';
         let audio = audioPlayerFull;
+
+        // --- Badge musicale sul bottone Info: appare al primo caricamento,
+        // pulsa 3 volte in modo discreto, poi resta fisso finché l'utente
+        // non apre il pannello Info, momento in cui scompare per sempre
+        // (persistito in localStorage per non ripresentarsi ai refresh).
+        const BADGE_DISMISSED_KEY = 'athanor_info_badge_dismissed';
+        if (!localStorage.getItem(BADGE_DISMISSED_KEY)) {
+            requestAnimationFrame(() => {
+                infoBadge.classList.add('visible');
+                setTimeout(() => infoBadge.classList.add('pulsing'), 600);
+            });
+        }
+
+        function dismissInfoBadge() {
+            infoBadge.classList.remove('visible', 'pulsing');
+            localStorage.setItem(BADGE_DISMISSED_KEY, '1');
+        }
 
         const preloadedImages = {};
         function preloadImage(src) {
@@ -1145,7 +1237,6 @@
             }, 600);
         }
 
-        // --- Capitoli traccia mindfulness ---
         function buildChapters() {
             chaptersRow.innerHTML = '';
             ARTWORK_CONFIG.mindfulnessChapters.forEach((chapter, idx) => {
@@ -1227,6 +1318,7 @@
             e.stopPropagation();
             infoPanelVisible = !infoPanelVisible;
             infoPanel.classList.toggle('visible', infoPanelVisible);
+            dismissInfoBadge();
         });
 
         let touchTimeout;
