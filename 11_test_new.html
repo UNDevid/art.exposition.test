@@ -99,7 +99,6 @@
             }
         }
 
-        /* Progress bar oraria - cornice schermo */
         .progress-frame {
             position: fixed;
             top: 0;
@@ -306,7 +305,6 @@
             transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.2, 1), -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Stato PAUSED (icona mostra il triangolo "play") */
         .icon-morph .bar-left {
             -webkit-clip-path: polygon(15% 10%, 55% 32.857%, 55% 67.143%, 15% 90%);
             clip-path: polygon(15% 10%, 55% 32.857%, 55% 67.143%, 15% 90%);
@@ -317,7 +315,6 @@
             clip-path: polygon(55% 32.857%, 85% 50%, 85% 50%, 55% 67.143%);
         }
 
-        /* Stato PLAYING (icona mostra la pausa a due barre) */
         .audio-control:not(.paused) .icon-morph .bar-left {
             -webkit-clip-path: polygon(15% 10%, 42% 10%, 42% 90%, 15% 90%);
             clip-path: polygon(15% 10%, 42% 10%, 42% 90%, 15% 90%);
@@ -372,7 +369,6 @@
             }
         }
 
-        /* Top bar: contiene loghi gruppo musicale e bottone info, allineati sullo stesso asse centrale */
         .top-bar {
             position: absolute;
             top: 5vh;
@@ -530,7 +526,6 @@
             opacity: 1;
         }
 
-        /* Loghi gruppo musicale */
         .band-logos {
             display: flex;
             align-items: center;
@@ -555,7 +550,6 @@
             filter: brightness(0) invert(1) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
         }
 
-        /* Switch traccia (brano / mindfulness) - stile tab bar Android */
         .track-switch {
             position: relative;
             display: flex;
@@ -610,9 +604,58 @@
             color: rgba(0, 0, 0, 0.85);
         }
 
-        @supports (-webkit-touch-callout: none) {
+        /* Capitoli traccia mindfulness: riga di chip compatti sotto lo switch,
+           visibile solo quando la modalità attiva è "mindfulness". */
+        .chapters-row {
+            display: flex;
+            gap: clamp(6px, 1.2vmin, 10px);
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transform: translateY(-6px);
+            transition: max-height 0.35s ease, opacity 0.3s ease, transform 0.3s ease, margin-top 0.35s ease;
+            margin-top: 0;
+            width: clamp(220px, 32vmin, 280px);
+        }
 
-            /* Solo iOS Safari */
+        .chapters-row.visible {
+            max-height: clamp(36px, 6vmin, 48px);
+            opacity: 1;
+            transform: translateY(0);
+            margin-top: clamp(4px, 1vmin, 8px);
+        }
+
+        .chapter-chip {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(6px, 1.1vmin, 9px) clamp(4px, 1vmin, 8px);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 999px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: clamp(10px, 1.4vmin, 12px);
+            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            cursor: pointer;
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+            transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+        }
+
+        .chapter-chip:hover {
+            background: rgba(255, 255, 255, 0.14);
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .chapter-chip.active {
+            background: rgba(255, 255, 255, 0.9);
+            color: rgba(0, 0, 0, 0.85);
+            border-color: rgba(255, 255, 255, 0.9);
+        }
+
+        @supports (-webkit-touch-callout: none) {
             .glow {
                 filter: blur(80px) !important;
             }
@@ -719,19 +762,21 @@
             .track-switch .track-label {
                 font-size: clamp(11px, 1.6vmin, 14px);
             }
+
+            .chapters-row {
+                width: clamp(180px, 26vmin, 230px);
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Progress frame oraria -->
     <div class="progress-frame" id="progressFrame">
         <svg id="progressSvg" preserveAspectRatio="none">
             <path id="progressPath" class="progress-stroke" />
         </svg>
     </div>
 
-    <!-- Barra superiore: loghi gruppo musicale + bottone info, allineati sullo stesso asse -->
     <div class="top-bar">
         <div class="band-logos">
             <img src="images/logo_1.png" alt="Armonie di Gran Classe 1" class="band-logo force-white">
@@ -754,12 +799,14 @@
                 <span class="loader"></span>
             </button>
 
-            <!-- Switch traccia brano / mindfulness -->
             <div class="track-switch" id="trackSwitch" role="button" tabindex="0" aria-label="Cambia traccia audio">
                 <div class="switch-thumb" id="switchThumb"></div>
                 <span class="track-label label-full">Brano</span>
                 <span class="track-label label-mindfulness">Mindfulness</span>
             </div>
+
+            <!-- Capitoli, visibili solo in modalità mindfulness -->
+            <div class="chapters-row" id="chaptersRow"></div>
         </div>
     </div>
 
@@ -795,7 +842,6 @@
         <div class="glow glow-3"></div>
     </div>
 
-    <!-- Doppia traccia audio -->
     <audio id="audioPlayerFull" preload="auto" loop>
         <source src="audio/eleven.mp3" type="audio/mpeg">
     </audio>
@@ -808,7 +854,15 @@
             title: "Io Sono",
             imageSrcFull: "images/opera_11.png",
             imageSrcMindfulness: "images/opera_11_mindfulness.png",
-            exhibition: "L'alfabeto numerico dell'esistenza"
+            exhibition: "L'alfabeto numerico dell'esistenza",
+            // Timestamp (in secondi) dei 4 capitoli della traccia mindfulness.
+            // Da personalizzare per ogni quadro in base alla durata reale delle sezioni.
+            mindfulnessChapters: [
+                { label: "Intro", time: 0 },
+                { label: "Esercizio", time: 120 },
+                { label: "Brano", time: 300 },
+                { label: "Outro", time: 480 }
+            ]
         };
 
         const audioPlayerFull = document.getElementById('audioPlayerFull');
@@ -822,16 +876,15 @@
         const infoPanel = document.getElementById('infoPanel');
         const errorMessage = document.getElementById('errorMessage');
         const trackSwitch = document.getElementById('trackSwitch');
+        const chaptersRow = document.getElementById('chaptersRow');
 
         let colorsCache = null;
         let infoPanelVisible = false;
         let pathLength = 0;
 
-        // Stato traccia attiva: 'full' | 'mindfulness'
         let currentMode = 'full';
-        let audio = audioPlayerFull; // riferimento all'audio correntemente attivo
+        let audio = audioPlayerFull;
 
-        // --- Precaricamento dell'immagine alternativa ---
         const preloadedImages = {};
         function preloadImage(src) {
             if (preloadedImages[src]) return;
@@ -841,7 +894,6 @@
         }
         preloadImage(ARTWORK_CONFIG.imageSrcMindfulness);
 
-        // Crea path rettangolare preciso basato sulle dimensioni REALI dell'elemento
         function updateProgressPath() {
             const rect = progressFrame.getBoundingClientRect();
             const w = rect.width;
@@ -883,10 +935,8 @@
             }, 100);
         });
 
-        // Popola info panel
         document.getElementById('artworkTitle').textContent = ARTWORK_CONFIG.title;
 
-        // Media Session API
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: ARTWORK_CONFIG.title,
@@ -949,7 +999,6 @@
             }, 600);
         }
 
-        // --- Gestione eventi per un dato elemento audio ---
         function bindAudioEvents(audioEl) {
             audioEl.addEventListener('loadedmetadata', () => {
                 if (audioEl === audio) {
@@ -1036,7 +1085,6 @@
         bindAudioEvents(audioPlayerFull);
         bindAudioEvents(audioPlayerMindfulness);
 
-        // Progress bar ottimizzata con requestAnimationFrame + interpolazione
         let rafId = null;
         let startTime = null;
 
@@ -1058,7 +1106,6 @@
             }
         }
 
-        // Reset immediato della progress bar (usato al cambio traccia)
         function resetProgressBar() {
             if (rafId) {
                 cancelAnimationFrame(rafId);
@@ -1068,7 +1115,6 @@
             progressPath.style.strokeDasharray = `0 ${pathLength}`;
         }
 
-        // Audio control click (play/pausa sulla traccia attiva)
         audioControl.addEventListener('click', async (e) => {
             createRipple(e);
 
@@ -1086,7 +1132,6 @@
             }
         });
 
-        // --- Switch traccia: cambia audio + immagine con flip ---
         function triggerImageFlip(mode) {
             const newSrc = mode === 'full' ? ARTWORK_CONFIG.imageSrcFull : ARTWORK_CONFIG.imageSrcMindfulness;
             coverImage.classList.add('flipping');
@@ -1100,6 +1145,47 @@
             }, 600);
         }
 
+        // --- Capitoli traccia mindfulness ---
+        function buildChapters() {
+            chaptersRow.innerHTML = '';
+            ARTWORK_CONFIG.mindfulnessChapters.forEach((chapter, idx) => {
+                const chip = document.createElement('div');
+                chip.className = 'chapter-chip';
+                chip.textContent = chapter.label;
+                chip.dataset.index = idx;
+                chip.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    audioPlayerMindfulness.currentTime = chapter.time;
+                    updateActiveChapter();
+                    if (audioPlayerMindfulness.paused && currentMode === 'mindfulness') {
+                        audioPlayerMindfulness.play().then(() => setButtonState(true)).catch(() => {});
+                    }
+                });
+                chaptersRow.appendChild(chip);
+            });
+        }
+        buildChapters();
+
+        function updateActiveChapter() {
+            if (currentMode !== 'mindfulness') return;
+            const t = audioPlayerMindfulness.currentTime;
+            const chapters = ARTWORK_CONFIG.mindfulnessChapters;
+            let activeIdx = 0;
+            for (let i = 0; i < chapters.length; i++) {
+                if (t >= chapters[i].time) activeIdx = i;
+            }
+            [...chaptersRow.children].forEach((chip, i) => {
+                chip.classList.toggle('active', i === activeIdx);
+            });
+        }
+
+        audioPlayerMindfulness.addEventListener('timeupdate', updateActiveChapter);
+
+        function toggleChaptersVisibility() {
+            chaptersRow.classList.toggle('visible', currentMode === 'mindfulness');
+            if (currentMode === 'mindfulness') updateActiveChapter();
+        }
+
         function switchTrack() {
             const wasPlaying = !audio.paused;
             audio.pause();
@@ -1110,6 +1196,7 @@
             resetProgressBar();
 
             trackSwitch.classList.toggle('mindfulness', currentMode === 'mindfulness');
+            toggleChaptersVisibility();
             triggerImageFlip(currentMode);
 
             preloadImage(currentMode === 'full' ? ARTWORK_CONFIG.imageSrcMindfulness : ARTWORK_CONFIG.imageSrcFull);
@@ -1136,14 +1223,12 @@
             }
         });
 
-        // Info button toggle
         infoButton.addEventListener('click', (e) => {
             e.stopPropagation();
             infoPanelVisible = !infoPanelVisible;
             infoPanel.classList.toggle('visible', infoPanelVisible);
         });
 
-        // Touch effect sulla cover (solo mobile)
         let touchTimeout;
 
         coverImage.addEventListener('touchstart', () => {
@@ -1166,7 +1251,6 @@
             coverImage.classList.remove('pressed');
         });
 
-        // Close info panel when clicking outside
         document.addEventListener('click', (e) => {
             if (infoPanelVisible && !infoPanel.contains(e.target) && e.target !== infoButton) {
                 infoPanelVisible = false;
@@ -1174,7 +1258,6 @@
             }
         });
 
-        // Extract colors from image
         function extractColors() {
             if (colorsCache) {
                 applyColors(colorsCache);
@@ -1226,7 +1309,6 @@
             return sorted.length >= 3 ? sorted : ['#ff6b6b', '#4ecdc4', '#95e1d3'];
         }
 
-        // Image load handling
         coverImage.addEventListener('load', () => {
             coverImage.classList.add('loaded');
             extractColors();
