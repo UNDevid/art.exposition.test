@@ -370,7 +370,7 @@
             right: 5vh;
             z-index: 60;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
             gap: clamp(10px, 2vmin, 16px);
         }
@@ -406,10 +406,6 @@
             transform: scale(1.05);
         }
 
-        /* Badge musicale: piccolo indicatore sul bottone Info che segnala la
-           presenza del credito musicale nel pannello. Fa un singolo, discreto
-           "respiro" (pulse) alcune volte al primo caricamento e poi si ferma
-           per sempre; scompare definitivamente al primo click sul bottone. */
         .info-badge {
             position: absolute;
             top: -2px;
@@ -564,6 +560,14 @@
             opacity: 1;
         }
 
+        .band-block {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: clamp(4px, 0.8vmin, 6px);
+            min-width: 0;
+        }
+
         .band-logos {
             display: flex;
             align-items: center;
@@ -586,6 +590,19 @@
 
         .band-logo.force-white {
             filter: brightness(0) invert(1) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Credito musicale: seconda riga sotto la pillola dei loghi, sempre
+           visibile (anche su mobile/portrait) per rinforzare il credito
+           senza appesantire la pillola stessa. */
+        .band-credit {
+            font-size: clamp(10px, 2.6vw, 12px);
+            color: rgba(255, 255, 255, 0.55);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-weight: 500;
+            white-space: nowrap;
+            letter-spacing: 0.01em;
+            padding-left: clamp(6px, 1.2vw, 10px);
         }
 
         .track-switch {
@@ -706,23 +723,30 @@
             border-color: rgba(255, 255, 255, 0.9);
         }
 
-        /* Credito musicale fisso: piccola scritta discreta, sempre visibile,
-           posizionata vicino ai loghi già presenti in top bar per rinforzare
-           (non duplicare) il credito, senza aggiungere un secondo blocco
-           visivo separato altrove nella pagina. */
-        .band-credit {
-            font-size: clamp(9px, 1.3vmin, 11px);
-            color: rgba(255, 255, 255, 0.45);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            font-weight: 500;
-            white-space: nowrap;
-            margin-left: clamp(4px, 0.8vmin, 8px);
-            letter-spacing: 0.01em;
-        }
-
         @supports (-webkit-touch-callout: none) {
             .glow {
                 filter: blur(80px) !important;
+            }
+        }
+
+        /* Portrait mobile: la topbar (loghi + credito) occupa più altezza
+           verticale che in landscape, quindi riserviamo esplicitamente
+           dello spazio in cima al container per evitare che la cover
+           venga sovrapposta/nascosta sotto i loghi. */
+        @media (max-width: 768px) and (orientation: portrait) {
+            .container {
+                padding-top: clamp(90px, 16vh, 130px);
+                justify-content: flex-start;
+            }
+
+            .image-wrapper {
+                max-height: 62vh;
+                max-height: 62dvh;
+            }
+
+            .cover-image {
+                max-height: 62vh;
+                max-height: 62dvh;
             }
         }
 
@@ -752,7 +776,7 @@
             }
 
             .band-credit {
-                display: none;
+                font-size: clamp(9px, 2.4vw, 11px);
             }
         }
 
@@ -851,9 +875,11 @@
     </div>
 
     <div class="top-bar">
-        <div class="band-logos">
-            <img src="images/logo_1.png" alt="Armonie di Gran Classe 1" class="band-logo force-white">
-            <img src="images/logo_2.png" alt="Armonie di Gran Classe 2" class="band-logo">
+        <div class="band-block">
+            <div class="band-logos">
+                <img src="images/logo_1.png" alt="Armonie di Gran Classe 1" class="band-logo force-white">
+                <img src="images/logo_2.png" alt="Armonie di Gran Classe 2" class="band-logo">
+            </div>
             <span class="band-credit">Musiche di Trio Armonie di Gran Classe</span>
         </div>
         <div class="info-button-wrapper">
@@ -960,10 +986,6 @@
         let currentMode = 'full';
         let audio = audioPlayerFull;
 
-        // --- Badge musicale sul bottone Info: appare al primo caricamento,
-        // pulsa 3 volte in modo discreto, poi resta fisso finché l'utente
-        // non apre il pannello Info, momento in cui scompare per sempre
-        // (persistito in localStorage per non ripresentarsi ai refresh).
         const BADGE_DISMISSED_KEY = 'athanor_info_badge_dismissed';
         if (!localStorage.getItem(BADGE_DISMISSED_KEY)) {
             requestAnimationFrame(() => {
