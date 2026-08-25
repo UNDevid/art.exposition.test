@@ -16,6 +16,7 @@
         body {
             width: 100vw;
             height: 100vh;
+            height: 100dvh;
             overflow: hidden;
             background: #000;
             display: flex;
@@ -50,6 +51,7 @@
             position: relative;
             width: min(70vmin, 500px);
             max-height: 85vh;
+            max-height: 85dvh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -59,6 +61,7 @@
         .cover-image {
             max-width: 100%;
             max-height: 85vh;
+            max-height: 85dvh;
             width: auto;
             height: auto;
             object-fit: contain;
@@ -103,6 +106,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
+            height: 100dvh;
             pointer-events: none;
             z-index: 50;
             opacity: 0;
@@ -277,10 +281,11 @@
         }
 
         /* Icona play/pausa: morph CSS puro tramite clip-path.
-           Il triangolo del "play" è diviso idealmente in due metà (sinistra/destra),
-           ciascuna con 4 vertici; lo stato "pausa" usa due barre, anch'esse con
-           4 vertici ciascuna. Avendo lo stesso numero di punti, il browser
-           interpola fluidamente il clip-path da una forma all'altra. */
+           I due poligoni sono calcolati come intersezione esatta di un vero
+           triangolo (vertici 15,10 / 15,90 / 85,50) tagliato da una retta
+           verticale a x=55%: condividendo gli stessi due punti di taglio,
+           l'unione delle due metà produce un bordo diagonale continuo,
+           senza spigoli visibili nella cucitura centrale. */
         .icon-morph {
             position: relative;
             width: clamp(34px, 5vmin, 50px);
@@ -296,20 +301,20 @@
             width: 100%;
             height: 100%;
             background: currentColor;
-            -webkit-clip-path: polygon(15% 8%, 60% 32%, 60% 68%, 15% 92%);
-            clip-path: polygon(15% 8%, 60% 32%, 60% 68%, 15% 92%);
+            -webkit-clip-path: polygon(15% 10%, 55% 32.857%, 55% 67.143%, 15% 90%);
+            clip-path: polygon(15% 10%, 55% 32.857%, 55% 67.143%, 15% 90%);
             transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.2, 1), -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* Stato PAUSED (icona mostra il triangolo "play") */
         .icon-morph .bar-left {
-            -webkit-clip-path: polygon(15% 8%, 60% 32%, 60% 68%, 15% 92%);
-            clip-path: polygon(15% 8%, 60% 32%, 60% 68%, 15% 92%);
+            -webkit-clip-path: polygon(15% 10%, 55% 32.857%, 55% 67.143%, 15% 90%);
+            clip-path: polygon(15% 10%, 55% 32.857%, 55% 67.143%, 15% 90%);
         }
 
         .icon-morph .bar-right {
-            -webkit-clip-path: polygon(60% 32%, 85% 50%, 85% 50%, 60% 68%);
-            clip-path: polygon(60% 32%, 85% 50%, 85% 50%, 60% 68%);
+            -webkit-clip-path: polygon(55% 32.857%, 85% 50%, 85% 50%, 55% 67.143%);
+            clip-path: polygon(55% 32.857%, 85% 50%, 85% 50%, 55% 67.143%);
         }
 
         /* Stato PLAYING (icona mostra la pausa a due barre) */
@@ -423,6 +428,9 @@
             pointer-events: none;
             transform: translateY(-10px);
             transition: opacity 0.3s ease, transform 0.3s ease;
+            max-height: 80vh;
+            max-height: 80dvh;
+            overflow-y: auto;
         }
 
         .info-panel.visible {
@@ -453,6 +461,52 @@
 
         .info-panel strong {
             color: rgba(255, 255, 255, 0.9);
+        }
+
+        .info-divider {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            margin: clamp(12px, 1.8vmin, 18px) 0;
+        }
+
+        .info-panel h3 {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: clamp(13px, 1.9vmin, 15px);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: clamp(8px, 1.2vmin, 12px);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        .social-links {
+            display: flex;
+            gap: clamp(10px, 1.6vmin, 14px);
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: clamp(36px, 5.5vmin, 44px);
+            height: clamp(36px, 5.5vmin, 44px);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            transition: background 0.25s ease, transform 0.25s ease;
+        }
+
+        .social-links a:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: scale(1.08);
+        }
+
+        .social-links svg {
+            width: 55%;
+            height: 55%;
+            fill: currentColor;
         }
 
         .error-message {
@@ -597,6 +651,7 @@
                 gap: clamp(20px, 4vmin, 32px);
                 max-width: 92vw;
                 max-height: 100vh;
+                max-height: 100dvh;
             }
 
             .controls-group {
@@ -606,11 +661,13 @@
             .image-wrapper {
                 width: min(48vmin, 380px);
                 max-height: 82vh;
+                max-height: 82dvh;
                 flex-shrink: 0;
             }
 
             .cover-image {
                 max-height: 82vh;
+                max-height: 82dvh;
             }
 
             .audio-control {
@@ -710,6 +767,22 @@
         <h2 id="artworkTitle">Io Sono</h2>
         <p><strong>Artista:</strong> Elisa Aiassa</p>
         <p><strong>Durata:</strong> <span id="audioDuration">--:--</span></p>
+
+        <hr class="info-divider">
+
+        <h3>Musiche di</h3>
+        <p>Trio Armonie di Gran Classe</p>
+        <div class="social-links">
+            <a href="https://www.instagram.com/_armoniedigranclasse_/" target="_blank" rel="noopener" aria-label="Instagram Armonie di Gran Classe">
+                <svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.97.24 2.43.4a4.9 4.9 0 0 1 1.77 1.15 4.9 4.9 0 0 1 1.15 1.77c.16.46.35 1.26.4 2.43.07 1.25.07 1.65.07 4.85s0 3.6-.07 4.85c-.05 1.17-.24 1.97-.4 2.43a4.9 4.9 0 0 1-1.15 1.77 4.9 4.9 0 0 1-1.77 1.15c-.46.16-1.26.35-2.43.4-1.25.07-1.65.07-4.85.07s-3.6 0-4.85-.07c-1.17-.05-1.97-.24-2.43-.4a4.9 4.9 0 0 1-1.77-1.15 4.9 4.9 0 0 1-1.15-1.77c-.16-.46-.35-1.26-.4-2.43C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.85c.05-1.17.24-1.97.4-2.43a4.9 4.9 0 0 1 1.15-1.77 4.9 4.9 0 0 1 1.77-1.15c.46-.16 1.26-.35 2.43-.4C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.15 0-3.52 0-4.76.07-1.02.05-1.58.21-1.95.35-.49.19-.84.42-1.2.79-.37.36-.6.71-.79 1.2-.14.37-.3.93-.35 1.95C2.88 8.48 2.88 8.85 2.88 12s0 3.52.07 4.76c.05 1.02.21 1.58.35 1.95.19.49.42.84.79 1.2.36.37.71.6 1.2.79.37.14.93.3 1.95.35 1.24.07 1.61.07 4.76.07s3.52 0 4.76-.07c1.02-.05 1.58-.21 1.95-.35.49-.19.84-.42 1.2-.79.37-.36.6-.71.79-1.2.14-.37.3-.93.35-1.95.07-1.24.07-1.61.07-4.76s0-3.52-.07-4.76c-.05-1.02-.21-1.58-.35-1.95a3.1 3.1 0 0 0-.79-1.2 3.1 3.1 0 0 0-1.2-.79c-.37-.14-.93-.3-1.95-.35C15.52 4 15.15 4 12 4zm0 3.4a4.6 4.6 0 1 1 0 9.2 4.6 4.6 0 0 1 0-9.2zm0 1.8a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zm5.85-2.03a1.08 1.08 0 1 1-2.15 0 1.08 1.08 0 0 1 2.15 0z"/></svg>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61569347360024" target="_blank" rel="noopener" aria-label="Facebook Armonie di Gran Classe">
+                <svg viewBox="0 0 24 24"><path d="M13.5 21v-7.9h2.65l.4-3.08H13.5V8.05c0-.89.25-1.5 1.52-1.5h1.63V3.8c-.28-.04-1.24-.12-2.36-.12-2.33 0-3.93 1.42-3.93 4.03v2.25H7.7v3.08h2.66V21h3.14z"/></svg>
+            </a>
+        </div>
+        <p style="margin-top: 10px;">
+            <a href="https://www.instagram.com/stories/highlights/18058294064278404/" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.65); font-size: 13px;">Cos'è Armonie di Emozioni →</a>
+        </p>
     </div>
 
     <div class="error-message" id="errorMessage">
