@@ -36,6 +36,14 @@
             gap: clamp(24px, 4vmin, 40px);
         }
 
+        .controls-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(24px, 4vmin, 40px);
+        }
+
         .image-wrapper {
             position: relative;
             width: min(70vmin, 500px);
@@ -48,7 +56,7 @@
 
         .cover-image {
             max-width: 100%;
-            max-height: 100%;
+            max-height: 85vh;
             width: auto;
             height: auto;
             object-fit: contain;
@@ -352,10 +360,21 @@
             }
         }
 
-        .info-button {
+        /* Top bar: contiene loghi gruppo musicale e bottone info, allineati sullo stesso asse centrale */
+        .top-bar {
             position: absolute;
             top: 5vh;
+            left: 5vh;
             right: 5vh;
+            z-index: 60;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: clamp(10px, 2vmin, 16px);
+        }
+
+        .info-button {
+            flex-shrink: 0;
             width: clamp(40px, 6vmin, 54px);
             height: clamp(40px, 6vmin, 54px);
             border-radius: 50%;
@@ -367,7 +386,6 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            z-index: 60;
             font-size: clamp(20px, 3vmin, 28px);
             color: rgba(255, 255, 255, 0.8);
             font-weight: 600;
@@ -451,9 +469,6 @@
 
         /* Loghi gruppo musicale */
         .band-logos {
-            position: absolute;
-            top: 5vh;
-            left: 5vh;
             display: flex;
             align-items: center;
             gap: clamp(12px, 2.2vmin, 20px);
@@ -462,7 +477,7 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 999px;
-            z-index: 60;
+            min-width: 0;
         }
 
         .band-logo {
@@ -544,8 +559,9 @@
                 filter: blur(60px);
             }
 
-            .info-button {
+            .top-bar {
                 top: 4vh;
+                left: 4vh;
                 right: 4vh;
             }
 
@@ -559,13 +575,6 @@
                 transform: translateX(50%) translateY(0);
             }
 
-            .band-logos {
-                top: 4vh;
-                left: 4vh;
-                gap: clamp(14px, 3vmin, 20px);
-                padding: clamp(10px, 2vmin, 14px) clamp(16px, 3vmin, 22px);
-            }
-
             .band-logo {
                 height: clamp(44px, 9vmin, 60px);
             }
@@ -575,13 +584,21 @@
         @media (max-width: 932px) and (orientation: landscape) {
             .container {
                 flex-direction: row;
-                gap: clamp(16px, 3vmin, 24px);
-                max-width: 90vw;
+                gap: clamp(20px, 4vmin, 32px);
+                max-width: 92vw;
+            }
+
+            .controls-group {
+                gap: clamp(14px, 2.5vmin, 22px);
             }
 
             .image-wrapper {
-                width: min(50vmin, 400px);
-                max-height: 75vh;
+                width: min(48vmin, 380px);
+                max-height: 82vh;
+            }
+
+            .cover-image {
+                max-height: 82vh;
             }
 
             .audio-control {
@@ -600,9 +617,13 @@
                 height: clamp(26px, 3.8vmin, 36px);
             }
 
-            .info-button {
+            .top-bar {
                 top: 3vh;
+                left: 3vh;
                 right: 3vh;
+            }
+
+            .info-button {
                 width: clamp(36px, 5.5vmin, 48px);
                 height: clamp(36px, 5.5vmin, 48px);
                 font-size: clamp(18px, 2.8vmin, 24px);
@@ -619,8 +640,6 @@
             }
 
             .band-logos {
-                top: 3vh;
-                left: 3vh;
                 gap: clamp(10px, 1.8vmin, 16px);
                 padding: clamp(8px, 1.4vmin, 12px) clamp(12px, 2vmin, 18px);
             }
@@ -649,10 +668,13 @@
         </svg>
     </div>
 
-    <!-- Loghi gruppo musicale -->
-    <div class="band-logos">
-        <img src="images/logo_1.png" alt="Armonie di Gran Classe 1" class="band-logo force-white">
-        <img src="images/logo_2.png" alt="Armonie di Gran Classe 2" class="band-logo">
+    <!-- Barra superiore: loghi gruppo musicale + bottone info, allineati sullo stesso asse -->
+    <div class="top-bar">
+        <div class="band-logos">
+            <img src="images/logo_1.png" alt="Armonie di Gran Classe 1" class="band-logo force-white">
+            <img src="images/logo_2.png" alt="Armonie di Gran Classe 2" class="band-logo">
+        </div>
+        <button class="info-button" id="infoButton">i</button>
     </div>
 
     <div class="container">
@@ -660,21 +682,21 @@
             <img src="images/opera_11.png" alt="Cover" class="cover-image" id="coverImage" loading="lazy">
         </div>
 
-        <button class="audio-control paused loading" id="audioControl" aria-label="Riproduci traccia">
-            <span class="icon icon-play" aria-hidden="true"></span>
-            <span class="icon icon-pause" aria-hidden="true"></span>
-            <span class="loader"></span>
-        </button>
+        <div class="controls-group">
+            <button class="audio-control paused loading" id="audioControl" aria-label="Riproduci traccia">
+                <span class="icon icon-play" aria-hidden="true"></span>
+                <span class="icon icon-pause" aria-hidden="true"></span>
+                <span class="loader"></span>
+            </button>
 
-        <!-- Switch traccia brano / mindfulness -->
-        <div class="track-switch" id="trackSwitch" role="button" tabindex="0" aria-label="Cambia traccia audio">
-            <div class="switch-thumb" id="switchThumb"></div>
-            <span class="track-label label-full">Brano</span>
-            <span class="track-label label-mindfulness">Mindfulness</span>
+            <!-- Switch traccia brano / mindfulness -->
+            <div class="track-switch" id="trackSwitch" role="button" tabindex="0" aria-label="Cambia traccia audio">
+                <div class="switch-thumb" id="switchThumb"></div>
+                <span class="track-label label-full">Brano</span>
+                <span class="track-label label-mindfulness">Mindfulness</span>
+            </div>
         </div>
     </div>
-
-    <button class="info-button" id="infoButton">i</button>
 
     <div class="info-panel" id="infoPanel">
         <h2 id="artworkTitle">Io Sono</h2>
@@ -727,6 +749,19 @@
         // Stato traccia attiva: 'full' | 'mindfulness'
         let currentMode = 'full';
         let audio = audioPlayerFull; // riferimento all'audio correntemente attivo
+
+        // --- Precaricamento dell'immagine alternativa ---
+        // Scarica in background l'immagine della modalità non ancora attiva,
+        // cosi il browser la ha già in cache quando l'utente preme lo switch
+        // e il flip non mostra alcun ritardo/flash di caricamento.
+        const preloadedImages = {};
+        function preloadImage(src) {
+            if (preloadedImages[src]) return;
+            const img = new Image();
+            img.src = src;
+            preloadedImages[src] = img;
+        }
+        preloadImage(ARTWORK_CONFIG.imageSrcMindfulness);
 
         // Crea path rettangolare preciso basato sulle dimensioni viewport
         function updateProgressPath() {
@@ -988,7 +1023,8 @@
             const newSrc = mode === 'full' ? ARTWORK_CONFIG.imageSrcFull : ARTWORK_CONFIG.imageSrcMindfulness;
             coverImage.classList.add('flipping');
 
-            // Cambio immagine a metà rotazione (quando il lato è di taglio, invisibile)
+            // Cambio immagine a metà rotazione (quando il lato è di taglio, invisibile).
+            // Grazie al preload, il browser ha già l'immagine in cache: nessun ritardo.
             setTimeout(() => {
                 coverImage.src = newSrc;
             }, 300);
@@ -1010,6 +1046,9 @@
 
             trackSwitch.classList.toggle('mindfulness', currentMode === 'mindfulness');
             triggerImageFlip(currentMode);
+
+            // Precarica anche l'immagine opposta per il prossimo switch
+            preloadImage(currentMode === 'full' ? ARTWORK_CONFIG.imageSrcMindfulness : ARTWORK_CONFIG.imageSrcFull);
 
             if (audio.duration) {
                 document.getElementById('audioDuration').textContent = formatTime(audio.duration);
