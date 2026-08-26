@@ -25,9 +25,6 @@
             align-items: center;
             position: relative;
             transform: translateZ(0);
-            /* Riserva lo spazio delle system bar (gesture/nav bar Android,
-               home indicator iOS) quando la pagina è edge-to-edge, evitando
-               che i controlli in basso finiscano coperti o tagliati. */
             padding-top: env(safe-area-inset-top, 0px);
             padding-bottom: env(safe-area-inset-bottom, 0px);
             padding-left: env(safe-area-inset-left, 0px);
@@ -370,14 +367,11 @@
             }
         }
 
-        /* Topbar semplificata: ora contiene solo il bottone Info, allineato
-           a destra. I loghi del gruppo sono stati spostati dentro il pannello
-           Info su richiesta della committente. */
         .top-bar {
             position: absolute;
             top: calc(5vh + env(safe-area-inset-top, 0px));
-            left: 5vh;
-            right: 5vh;
+            left: calc(5vh + env(safe-area-inset-left, 0px));
+            right: calc(5vh + env(safe-area-inset-right, 0px));
             z-index: 60;
             display: flex;
             align-items: flex-start;
@@ -454,14 +448,14 @@
         .info-panel {
             position: absolute;
             top: calc(5vh + env(safe-area-inset-top, 0px));
-            right: 5vh;
+            right: calc(5vh + env(safe-area-inset-right, 0px));
             background: rgba(20, 20, 20, 0.95);
             -webkit-backdrop-filter: blur(20px);
             backdrop-filter: blur(20px);
             border-radius: 16px;
             padding: clamp(20px, 3vmin, 32px);
-            min-width: clamp(250px, 40vmin, 320px);
-            max-width: 90vw;
+            width: clamp(270px, 42vmin, 360px);
+            max-width: calc(100vw - 10vh - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
             border: 1px solid rgba(255, 255, 255, 0.15);
             z-index: 65;
             opacity: 0;
@@ -519,18 +513,21 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        /* Loghi del gruppo dentro il pannello Info: riga compatta con i due
-           loghi affiancati, coerente con lo stile testuale del pannello. */
+        /* Loghi ingranditi (da ~34-46px a ~52-72px) per dare loro un peso
+           visivo piu' adeguato dentro il popup, ora che sono l'unico credito
+           visivo del gruppo rimasto sulla pagina. */
         .info-band-logos {
             display: flex;
             align-items: center;
-            gap: clamp(14px, 2.2vmin, 20px);
-            margin-bottom: clamp(10px, 1.6vmin, 14px);
+            gap: clamp(16px, 2.6vmin, 24px);
+            margin-bottom: clamp(12px, 1.8vmin, 16px);
+            flex-wrap: wrap;
         }
 
         .info-band-logo {
-            height: clamp(34px, 6vmin, 46px);
+            height: clamp(52px, 9vmin, 72px);
             width: auto;
+            max-width: 100%;
             opacity: 0.95;
         }
 
@@ -541,6 +538,7 @@
         .social-links {
             display: flex;
             gap: clamp(10px, 1.6vmin, 14px);
+            flex-wrap: wrap;
         }
 
         .social-links a {
@@ -716,6 +714,7 @@
         @media (max-width: 768px) and (orientation: portrait) {
             .container {
                 padding-top: clamp(70px, 12vh, 100px);
+                padding-bottom: clamp(28px, 5vh, 48px);
                 justify-content: flex-start;
             }
 
@@ -737,18 +736,23 @@
 
             .top-bar {
                 top: calc(4vh + env(safe-area-inset-top, 0px));
-                left: 4vh;
-                right: 4vh;
+                left: calc(4vh + env(safe-area-inset-left, 0px));
+                right: calc(4vh + env(safe-area-inset-right, 0px));
             }
 
             .info-panel {
                 top: calc(4vh + env(safe-area-inset-top, 0px));
                 right: 50%;
                 transform: translateX(50%) translateY(-10px);
+                max-width: calc(100vw - 8vh - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
             }
 
             .info-panel.visible {
                 transform: translateX(50%) translateY(0);
+            }
+
+            .info-band-logo {
+                height: clamp(48px, 11vw, 64px);
             }
         }
 
@@ -764,9 +768,6 @@
 
             .controls-group {
                 gap: clamp(14px, 2.5vmin, 22px);
-                /* Riserva spazio extra in basso per la gesture/navigation bar
-                   Android, così i chip dei capitoli restano sempre visibili
-                   e cliccabili anche su dispositivi con barra fissa. */
                 padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
             }
 
@@ -794,8 +795,8 @@
 
             .top-bar {
                 top: calc(3vh + env(safe-area-inset-top, 0px));
-                left: 3vh;
-                right: 3vh;
+                left: calc(3vh + env(safe-area-inset-left, 0px));
+                right: calc(3vh + env(safe-area-inset-right, 0px));
             }
 
             .info-button {
@@ -806,8 +807,13 @@
 
             .info-panel {
                 top: calc(3vh + env(safe-area-inset-top, 0px));
-                right: 3vh;
-                max-width: 40vw;
+                right: calc(3vh + env(safe-area-inset-right, 0px));
+                width: clamp(240px, 36vmin, 320px);
+                max-width: calc(100vw - 6vh - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+            }
+
+            .info-band-logo {
+                height: clamp(40px, 7vmin, 56px);
             }
 
             .error-message {
@@ -917,10 +923,6 @@
             imageSrcFull: "images/opera_11.png",
             imageSrcMindfulness: "images/opera_11_mindfulness.png",
             exhibition: "L'alfabeto numerico dell'esistenza",
-            // Solo 2 capitoli ora: "Intro" (i primi 2 minuti, identici in
-            // tutti i 4 quadri) e "Mindfulness" (tutto il resto: esercizio,
-            // brano, outro). Il secondo timestamp resta 120s: da confermare
-            ///personalizzare per ciascun quadro se l'intro varia leggermente.
             mindfulnessChapters: [
                 { label: "Intro", time: 0 },
                 { label: "Mindfulness", time: 120 }
