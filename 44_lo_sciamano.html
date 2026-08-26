@@ -3,14 +3,21 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1, user-scalable=no">
     <meta name="theme-color" content="#000000">
     <title>L'alfabeto numerico dell'esistenza</title>
     <style>
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            box-sizing: border-box
+        }
+
+        html {
+            overflow: hidden;
+            overscroll-behavior: none;
+            touch-action: manipulation
         }
 
         body {
@@ -28,7 +35,7 @@
             padding-top: env(safe-area-inset-top, 0px);
             padding-bottom: env(safe-area-inset-bottom, 0px);
             padding-left: env(safe-area-inset-left, 0px);
-            padding-right: env(safe-area-inset-right, 0px);
+            padding-right: env(safe-area-inset-right, 0px)
         }
 
         .container {
@@ -40,7 +47,7 @@
             justify-content: center;
             gap: clamp(24px, 4vmin, 40px);
             width: 100%;
-            height: 100%;
+            height: 100%
         }
 
         .controls-group {
@@ -48,7 +55,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: clamp(24px, 4vmin, 40px);
+            gap: clamp(24px, 4vmin, 40px)
         }
 
         .image-wrapper {
@@ -59,7 +66,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            perspective: 1200px;
+            perspective: 1200px
         }
 
         .cover-image {
@@ -70,86 +77,80 @@
             height: auto;
             object-fit: contain;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
             position: relative;
             z-index: 20;
             opacity: 0;
-            transition: opacity 0.4s ease;
+            transition: opacity .4s ease;
             cursor: pointer;
             transform-style: preserve-3d;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: transparent
         }
 
         .cover-image.loaded {
-            opacity: 1;
+            opacity: 1
         }
 
         .cover-image.pressed {
-            transform: translateZ(0) scale(0.96);
+            transform: translateZ(0) scale(.96)
         }
 
         .cover-image.flipping {
-            animation: flip-rotate 0.6s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+            animation: flip-rotate .6s cubic-bezier(.4, 0, .2, 1) forwards
         }
 
         @keyframes flip-rotate {
             0% {
-                transform: rotateY(0deg);
+                transform: rotateY(0deg)
             }
+
             100% {
-                transform: rotateY(360deg);
+                transform: rotateY(360deg)
             }
         }
 
         .progress-frame {
             position: fixed;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100vw;
             height: 100vh;
             height: 100dvh;
             pointer-events: none;
             z-index: 50;
             opacity: 0;
-            transition: opacity 0.5s ease;
-            transform: translateZ(0);
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
+            transition: opacity .5s ease;
+            transform: translateZ(0)
         }
 
         .progress-frame.visible {
-            opacity: 1;
+            opacity: 1
         }
 
         .progress-frame svg {
             width: 100%;
             height: 100%;
-            display: block;
+            display: block
         }
 
         .progress-stroke {
             fill: none;
-            stroke: rgba(255, 200, 100, 0.45);
+            stroke: rgba(255, 200, 100, .45);
             stroke-width: 5;
             stroke-linecap: round;
             stroke-dasharray: 0 10000;
-            filter: drop-shadow(0 0 6px rgba(255, 200, 100, 0.4));
+            filter: drop-shadow(0 0 6px rgba(255, 200, 100, .4));
             vector-effect: non-scaling-stroke;
             transform: translateZ(0);
-            will-change: stroke-dasharray;
-            transition: none;
+            will-change: stroke-dasharray
         }
 
         .glow-container {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             overflow: hidden;
-            z-index: 1;
+            z-index: 1
         }
 
         .glow {
@@ -161,32 +162,30 @@
             height: 120%;
             border-radius: 50%;
             filter: blur(160px);
-            opacity: 0.4;
+            opacity: .4;
             animation: tide 20s ease-in-out infinite;
             mix-blend-mode: screen;
-            transition: opacity 1s ease, filter 1s ease;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
+            transition: opacity 1s ease, filter 1s ease
         }
 
         .glow-1 {
             background: radial-gradient(circle, var(--color-1, #ff6b6b) 0%, transparent 70%);
             animation-delay: 0s;
-            animation-duration: 22s;
+            animation-duration: 22s
         }
 
         .glow-2 {
             background: radial-gradient(circle, var(--color-2, #4ecdc4) 0%, transparent 70%);
             animation-delay: 3s;
             animation-duration: 25s;
-            width: 100%;
+            width: 100%
         }
 
         .glow-3 {
             background: radial-gradient(circle, var(--color-3, #95e1d3) 0%, transparent 70%);
             animation-delay: 6s;
             animation-duration: 28s;
-            width: 110%;
+            width: 110%
         }
 
         @keyframes tide {
@@ -194,42 +193,42 @@
             0%,
             100% {
                 transform: translateX(-50%) translateY(0) scale(1) rotate(0deg);
-                opacity: 0.35;
+                opacity: .35
             }
 
             12.5% {
                 transform: translateX(-48%) translateY(-5%) scale(1.1) rotate(1deg);
-                opacity: 0.5;
+                opacity: .5
             }
 
             25% {
-                transform: translateX(-52%) translateY(-3%) scale(1.05) rotate(-0.5deg);
-                opacity: 0.42;
+                transform: translateX(-52%) translateY(-3%) scale(1.05) rotate(-.5deg);
+                opacity: .42
             }
 
             37.5% {
                 transform: translateX(-47%) translateY(-8%) scale(1.15) rotate(1.5deg);
-                opacity: 0.55;
+                opacity: .55
             }
 
             50% {
-                transform: translateX(-50%) translateY(-6%) scale(1.12) rotate(0.5deg);
-                opacity: 0.48;
+                transform: translateX(-50%) translateY(-6%) scale(1.12) rotate(.5deg);
+                opacity: .48
             }
 
             62.5% {
                 transform: translateX(-53%) translateY(-4%) scale(1.08) rotate(-1deg);
-                opacity: 0.45;
+                opacity: .45
             }
 
             75% {
                 transform: translateX(-49%) translateY(-9%) scale(1.18) rotate(1deg);
-                opacity: 0.58;
+                opacity: .58
             }
 
             87.5% {
-                transform: translateX(-51%) translateY(-5%) scale(1.1) rotate(-0.5deg);
-                opacity: 0.5;
+                transform: translateX(-51%) translateY(-5%) scale(1.1) rotate(-.5deg);
+                opacity: .5
             }
         }
 
@@ -243,44 +242,22 @@
             border: none;
             outline: none;
             cursor: pointer;
-            color: rgba(255, 255, 255, 0.55);
+            color: rgba(255, 255, 255, .55);
             background: transparent;
-            box-shadow: none;
-            transition: transform 0.3s ease, opacity 0.3s ease, color 0.3s ease;
+            transition: transform .3s ease, opacity .3s ease, color .3s ease;
             z-index: 30;
             overflow: visible;
             -webkit-tap-highlight-color: transparent;
-            -webkit-appearance: none;
-            appearance: none;
-            position: relative;
-        }
-
-        .audio-control:focus,
-        .audio-control:focus-visible {
-            outline: none !important;
-            box-shadow: none !important;
-            background: transparent !important;
-        }
-
-        .audio-control:hover {
-            transform: scale(1.04);
-        }
-
-        .audio-control:active {
-            background: transparent !important;
-        }
-
-        .audio-control::-moz-focus-inner {
-            border: 0;
+            position: relative
         }
 
         .audio-control.paused {
-            color: rgba(255, 255, 255, 0.95);
+            color: rgba(255, 255, 255, .95)
         }
 
         .audio-control.loading {
-            opacity: 0.5;
-            pointer-events: none;
+            opacity: .5;
+            pointer-events: none
         }
 
         .icon-morph {
@@ -288,82 +265,74 @@
             width: clamp(34px, 5vmin, 50px);
             height: clamp(34px, 5vmin, 50px);
             pointer-events: none;
-            z-index: 2;
+            z-index: 2
         }
 
         .icon-morph .bar {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: currentColor;
             -webkit-clip-path: polygon(15% 10%, 55% 32.857%, 55% 67.143%, 15% 90%);
             clip-path: polygon(15% 10%, 55% 32.857%, 55% 67.143%, 15% 90%);
-            transition: clip-path 0.4s cubic-bezier(0.4, 0, 0.2, 1), -webkit-clip-path 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .icon-morph .bar-left {
-            -webkit-clip-path: polygon(15% 10%, 55% 32.857%, 55% 67.143%, 15% 90%);
-            clip-path: polygon(15% 10%, 55% 32.857%, 55% 67.143%, 15% 90%);
+            transition: clip-path .4s cubic-bezier(.4, 0, .2, 1), -webkit-clip-path .4s cubic-bezier(.4, 0, .2, 1)
         }
 
         .icon-morph .bar-right {
             -webkit-clip-path: polygon(55% 32.857%, 85% 50%, 85% 50%, 55% 67.143%);
-            clip-path: polygon(55% 32.857%, 85% 50%, 85% 50%, 55% 67.143%);
+            clip-path: polygon(55% 32.857%, 85% 50%, 85% 50%, 55% 67.143%)
         }
 
         .audio-control:not(.paused) .icon-morph .bar-left {
             -webkit-clip-path: polygon(15% 10%, 42% 10%, 42% 90%, 15% 90%);
-            clip-path: polygon(15% 10%, 42% 10%, 42% 90%, 15% 90%);
+            clip-path: polygon(15% 10%, 42% 10%, 42% 90%, 15% 90%)
         }
 
         .audio-control:not(.paused) .icon-morph .bar-right {
             -webkit-clip-path: polygon(58% 10%, 85% 10%, 85% 90%, 58% 90%);
-            clip-path: polygon(58% 10%, 85% 10%, 85% 90%, 58% 90%);
+            clip-path: polygon(58% 10%, 85% 10%, 85% 90%, 58% 90%)
         }
 
         .loader {
             position: absolute;
             width: clamp(28px, 4vmin, 40px);
             height: clamp(28px, 4vmin, 40px);
-            border: 3px solid rgba(255, 255, 255, 0.2);
-            border-top-color: rgba(255, 255, 255, 0.8);
+            border: 3px solid rgba(255, 255, 255, .2);
+            border-top-color: rgba(255, 255, 255, .8);
             border-radius: 50%;
             animation: spin 1s linear infinite;
             opacity: 0;
             pointer-events: none;
-            z-index: 3;
+            z-index: 3
         }
 
         .audio-control.loading .loader {
-            opacity: 1;
+            opacity: 1
         }
 
         .audio-control.loading .icon-morph {
-            opacity: 0 !important;
+            opacity: 0 !important
         }
 
         @keyframes spin {
             to {
-                transform: rotate(360deg);
+                transform: rotate(360deg)
             }
         }
 
         .ripple {
             position: absolute;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, .4);
             transform: scale(0);
-            animation: ripple-animation 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+            animation: ripple-animation .5s cubic-bezier(.4, 0, .2, 1);
             pointer-events: none;
-            z-index: 1;
+            z-index: 1
         }
 
         @keyframes ripple-animation {
             to {
                 transform: scale(1.4);
-                opacity: 0;
+                opacity: 0
             }
         }
 
@@ -374,40 +343,34 @@
             right: calc(5vh + env(safe-area-inset-right, 0px));
             z-index: 60;
             display: flex;
-            align-items: flex-start;
-            justify-content: flex-end;
-            gap: clamp(10px, 2vmin, 16px);
+            justify-content: flex-end
         }
 
         .info-button-wrapper {
-            position: relative;
-            flex-shrink: 0;
+            position: relative
         }
 
         .info-button {
-            flex-shrink: 0;
             width: clamp(40px, 6vmin, 54px);
             height: clamp(40px, 6vmin, 54px);
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, .1);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, .2);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all .3s ease;
             font-size: clamp(20px, 3vmin, 28px);
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, .8);
             font-weight: 600;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif
         }
 
         .info-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.05);
+            background: rgba(255, 255, 255, .2);
+            transform: scale(1.05)
         }
 
         .info-badge {
@@ -417,128 +380,100 @@
             width: clamp(12px, 1.8vmin, 16px);
             height: clamp(12px, 1.8vmin, 16px);
             border-radius: 50%;
-            background: rgba(255, 200, 100, 0.9);
-            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6);
+            background: rgba(255, 200, 100, .9);
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, .6);
             pointer-events: none;
             opacity: 0;
-            transform: scale(0.6);
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            transform: scale(.6);
+            transition: opacity .4s ease, transform .4s ease
         }
 
         .info-badge.visible {
             opacity: 1;
-            transform: scale(1);
-        }
-
-        .info-badge.pulsing {
-            animation: badge-pulse 1.8s ease-in-out 3;
-        }
-
-        @keyframes badge-pulse {
-            0%, 100% {
-                transform: scale(1);
-                box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6), 0 0 0 0 rgba(255, 200, 100, 0.5);
-            }
-            50% {
-                transform: scale(1.18);
-                box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6), 0 0 0 6px rgba(255, 200, 100, 0);
-            }
+            transform: scale(1)
         }
 
         .info-panel {
-            position: absolute;
+            position: fixed;
             top: calc(5vh + env(safe-area-inset-top, 0px));
             right: calc(5vh + env(safe-area-inset-right, 0px));
-            background: rgba(20, 20, 20, 0.95);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(20, 20, 20, .95);
             backdrop-filter: blur(20px);
             border-radius: 16px;
             padding: clamp(20px, 3vmin, 32px);
-            width: clamp(270px, 42vmin, 360px);
-            max-width: calc(100vw - 10vh - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            width: min(clamp(270px, 42vmin, 360px), calc(100vw - 10vh - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
+            border: 1px solid rgba(255, 255, 255, .15);
             z-index: 65;
             opacity: 0;
             pointer-events: none;
             transform: translateY(-10px);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            max-height: 80vh;
-            max-height: 80dvh;
+            transition: opacity .3s ease, transform .3s ease;
+            max-height: min(80vh, calc(100dvh - 10vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)));
             overflow-y: auto;
+            overscroll-behavior: contain
         }
 
         .info-panel.visible {
             opacity: 1;
             pointer-events: auto;
-            transform: translateY(0);
+            transform: translateY(0)
         }
 
         .info-panel h2 {
-            color: rgba(255, 255, 255, 0.95);
+            color: rgba(255, 255, 255, .95);
             font-size: clamp(18px, 2.8vmin, 24px);
             margin-bottom: clamp(8px, 1.2vmin, 12px);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif;
+            font-weight: 600
         }
 
         .info-panel p {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, .7);
             font-size: clamp(14px, 2vmin, 16px);
             line-height: 1.5;
             margin-bottom: clamp(6px, 1vmin, 10px);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        .info-panel p:last-child {
-            margin-bottom: 0;
-        }
-
-        .info-panel strong {
-            color: rgba(255, 255, 255, 0.9);
+            font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif
         }
 
         .info-divider {
             border: none;
-            border-top: 1px solid rgba(255, 255, 255, 0.15);
-            margin: clamp(12px, 1.8vmin, 18px) 0;
+            border-top: 1px solid rgba(255, 255, 255, .15);
+            margin: clamp(12px, 1.8vmin, 18px) 0
         }
 
         .info-panel h3 {
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, .9);
             font-size: clamp(13px, 1.9vmin, 15px);
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
+            letter-spacing: .04em;
             margin-bottom: clamp(8px, 1.2vmin, 12px);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif
         }
 
-        /* Loghi ingranditi (da ~34-46px a ~52-72px) per dare loro un peso
-           visivo piu' adeguato dentro il popup, ora che sono l'unico credito
-           visivo del gruppo rimasto sulla pagina. */
         .info-band-logos {
             display: flex;
             align-items: center;
             gap: clamp(16px, 2.6vmin, 24px);
             margin-bottom: clamp(12px, 1.8vmin, 16px);
-            flex-wrap: wrap;
+            flex-wrap: wrap
         }
 
         .info-band-logo {
             height: clamp(52px, 9vmin, 72px);
             width: auto;
             max-width: 100%;
-            opacity: 0.95;
+            opacity: .95
         }
 
         .info-band-logo.force-white {
-            filter: brightness(0) invert(1);
+            filter: brightness(0) invert(1)
         }
 
         .social-links {
             display: flex;
             gap: clamp(10px, 1.6vmin, 14px);
-            flex-wrap: wrap;
+            flex-wrap: wrap
         }
 
         .social-links a {
@@ -548,22 +483,16 @@
             width: clamp(36px, 5.5vmin, 44px);
             height: clamp(36px, 5.5vmin, 44px);
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: rgba(255, 255, 255, 0.85);
-            text-decoration: none;
-            transition: background 0.25s ease, transform 0.25s ease;
-        }
-
-        .social-links a:hover {
-            background: rgba(255, 255, 255, 0.18);
-            transform: scale(1.08);
+            background: rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .15);
+            color: rgba(255, 255, 255, .85);
+            text-decoration: none
         }
 
         .social-links svg {
             width: 55%;
             height: 55%;
-            fill: currentColor;
+            fill: currentColor
         }
 
         .error-message {
@@ -571,20 +500,20 @@
             bottom: calc(15vh + env(safe-area-inset-bottom, 0px));
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(255, 59, 48, 0.9);
-            color: white;
+            background: rgba(255, 59, 48, .9);
+            color: #fff;
             padding: 12px 24px;
             border-radius: 12px;
             font-size: 14px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif;
             z-index: 40;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: opacity .3s ease
         }
 
         .error-message.visible {
-            opacity: 1;
+            opacity: 1
         }
 
         .track-switch {
@@ -593,19 +522,30 @@
             align-items: center;
             width: clamp(220px, 32vmin, 280px);
             height: clamp(44px, 6.5vmin, 54px);
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 255, 255, .15);
             border-radius: 999px;
             padding: 4px;
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
             z-index: 30;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif;
+            user-select: none
+        }
+
+        .track-switch {
+            -webkit-tap-highlight-color: transparent;
             -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             user-select: none;
             -webkit-touch-callout: none;
+            outline: none;
+        }
+
+        .track-switch:focus,
+        .track-switch:focus-visible,
+        .track-switch:active {
+            outline: none;
+            box-shadow: none;
+            background: rgba(255, 255, 255, .1);
         }
 
         .switch-thumb {
@@ -614,15 +554,15 @@
             left: 4px;
             width: calc(50% - 4px);
             height: calc(100% - 8px);
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, .9);
             border-radius: 999px;
-            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-            z-index: 1;
+            transition: transform .35s cubic-bezier(.4, 0, .2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .25);
+            z-index: 1
         }
 
         .track-switch.mindfulness .switch-thumb {
-            transform: translateX(100%);
+            transform: translateX(100%)
         }
 
         .track-switch .track-label {
@@ -630,20 +570,16 @@
             z-index: 2;
             flex: 1;
             text-align: center;
-            user-select: none;
             font-size: clamp(12px, 1.7vmin, 15px);
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.55);
-            transition: color 0.35s ease;
-            white-space: nowrap;
+            color: rgba(255, 255, 255, .55);
+            transition: color .35s ease;
+            white-space: nowrap
         }
 
-        .track-switch:not(.mindfulness) .track-label.label-full {
-            color: rgba(0, 0, 0, 0.85);
-        }
-
-        .track-switch.mindfulness .track-label.label-mindfulness {
-            color: rgba(0, 0, 0, 0.85);
+        .track-switch:not(.mindfulness) .label-full,
+        .track-switch.mindfulness .label-mindfulness {
+            color: rgba(0, 0, 0, .85)
         }
 
         .chapters-row {
@@ -653,21 +589,17 @@
             opacity: 0;
             overflow: hidden;
             transform: translateY(-6px);
-            transition: max-height 0.35s ease, opacity 0.3s ease, transform 0.3s ease, margin-top 0.35s ease;
+            transition: max-height .35s ease, opacity .3s ease, transform .3s ease, margin-top .35s ease;
             margin-top: 0;
             width: clamp(220px, 32vmin, 280px);
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
+            user-select: none
         }
 
         .chapters-row.visible {
             max-height: clamp(36px, 6vmin, 48px);
             opacity: 1;
             transform: translateY(0);
-            margin-top: clamp(4px, 1vmin, 8px);
+            margin-top: clamp(4px, 1vmin, 8px)
         }
 
         .chapter-chip {
@@ -676,731 +608,228 @@
             align-items: center;
             justify-content: center;
             padding: clamp(6px, 1.1vmin, 9px) clamp(4px, 1vmin, 8px);
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .15);
             border-radius: 999px;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, .6);
             font-size: clamp(10px, 1.4vmin, 12px);
             font-weight: 600;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif;
             cursor: pointer;
             white-space: nowrap;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
-            transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
-        }
-
-        .chapter-chip:hover {
-            background: rgba(255, 255, 255, 0.14);
-            color: rgba(255, 255, 255, 0.85);
+            transition: background .25s ease, color .25s ease, border-color .25s ease
         }
 
         .chapter-chip.active {
-            background: rgba(255, 255, 255, 0.9);
-            color: rgba(0, 0, 0, 0.85);
-            border-color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, .9);
+            color: rgba(0, 0, 0, .85);
+            border-color: rgba(255, 255, 255, .9)
         }
 
-        @supports (-webkit-touch-callout: none) {
-            .glow {
-                filter: blur(80px) !important;
-            }
+        .chapter-chip {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            outline: none;
         }
 
-        @media (max-width: 768px) and (orientation: portrait) {
+        .chapter-chip:focus,
+        .chapter-chip:focus-visible,
+        .chapter-chip:active {
+            outline: none;
+            box-shadow: none;
+            background: rgba(255, 255, 255, .08);
+        }
+
+        @media (max-width:768px) and (orientation:portrait) {
             .container {
                 padding-top: clamp(70px, 12vh, 100px);
                 padding-bottom: clamp(28px, 5vh, 48px);
-                justify-content: flex-start;
+                justify-content: flex-start
             }
 
-            .image-wrapper {
-                max-height: 65vh;
-                max-height: 65dvh;
-            }
-
+            .image-wrapper,
             .cover-image {
                 max-height: 65vh;
-                max-height: 65dvh;
+                max-height: 65dvh
             }
         }
 
-        @media (max-width: 768px) {
+        @media (max-width:768px) {
             .glow {
-                filter: blur(60px);
+                filter: blur(60px)
             }
 
             .top-bar {
                 top: calc(4vh + env(safe-area-inset-top, 0px));
                 left: calc(4vh + env(safe-area-inset-left, 0px));
-                right: calc(4vh + env(safe-area-inset-right, 0px));
+                right: calc(4vh + env(safe-area-inset-right, 0px))
             }
 
             .info-panel {
                 top: calc(4vh + env(safe-area-inset-top, 0px));
                 right: 50%;
                 transform: translateX(50%) translateY(-10px);
-                max-width: calc(100vw - 8vh - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+                width: min(clamp(270px, 82vw, 360px), calc(100vw - 8vh - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
+                max-height: min(82vh, calc(100dvh - 8vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)))
             }
 
             .info-panel.visible {
-                transform: translateX(50%) translateY(0);
+                transform: translateX(50%) translateY(0)
             }
 
             .info-band-logo {
-                height: clamp(48px, 11vw, 64px);
+                height: clamp(48px, 11vw, 64px)
             }
         }
 
-        /* Landscape mobile optimization */
-        @media (max-width: 932px) and (orientation: landscape) {
+        @media (orientation:landscape) and (max-width:932px) {
             .container {
                 flex-direction: row;
-                gap: clamp(20px, 4vmin, 32px);
-                max-width: 92vw;
-                max-height: 100vh;
+                gap: clamp(18px, 3.5vmin, 28px);
+                max-width: calc(100vw - 6vh - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
                 max-height: 100dvh;
+                padding: calc(10px + env(safe-area-inset-top, 0px)) clamp(12px, 2.6vw, 20px) calc(12px + env(safe-area-inset-bottom, 0px))
             }
 
             .controls-group {
-                gap: clamp(14px, 2.5vmin, 22px);
-                padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
+                gap: clamp(12px, 2.3vmin, 18px);
+                padding-bottom: max(env(safe-area-inset-bottom, 0px), 10px)
             }
 
             .image-wrapper {
-                width: min(48vmin, 380px);
-                max-height: 82vh;
-                max-height: 82dvh;
-                flex-shrink: 0;
+                width: min(42vmin, 320px);
+                max-height: 76vh;
+                max-height: 76dvh;
+                flex-shrink: 0
             }
 
             .cover-image {
-                max-height: 82vh;
-                max-height: 82dvh;
+                max-height: 76vh;
+                max-height: 76dvh
             }
 
             .audio-control {
-                width: clamp(70px, 10vmin, 100px);
-                height: clamp(70px, 10vmin, 100px);
+                width: clamp(68px, 9vmin, 92px);
+                height: clamp(68px, 9vmin, 92px)
             }
 
             .icon-morph {
-                width: clamp(26px, 4vmin, 38px);
-                height: clamp(26px, 4vmin, 38px);
+                width: clamp(24px, 3.8vmin, 34px);
+                height: clamp(24px, 3.8vmin, 34px)
             }
 
             .top-bar {
                 top: calc(3vh + env(safe-area-inset-top, 0px));
                 left: calc(3vh + env(safe-area-inset-left, 0px));
-                right: calc(3vh + env(safe-area-inset-right, 0px));
+                right: calc(3vh + env(safe-area-inset-right, 0px))
             }
 
             .info-button {
-                width: clamp(36px, 5.5vmin, 48px);
-                height: clamp(36px, 5.5vmin, 48px);
-                font-size: clamp(18px, 2.8vmin, 24px);
+                width: clamp(36px, 5.2vmin, 46px);
+                height: clamp(36px, 5.2vmin, 46px);
+                font-size: clamp(18px, 2.6vmin, 22px)
             }
 
             .info-panel {
-                top: calc(3vh + env(safe-area-inset-top, 0px));
-                right: calc(3vh + env(safe-area-inset-right, 0px));
-                width: clamp(240px, 36vmin, 320px);
-                max-width: calc(100vw - 6vh - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+                top: 50%;
+                left: 50%;
+                right: auto;
+                transform: translate(-50%, calc(-50% - 8px));
+                width: min(420px, calc(100vw - 28px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
+                max-height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+                padding: clamp(18px, 2.8vmin, 26px)
+            }
+
+            .info-panel.visible {
+                transform: translate(-50%, -50%)
             }
 
             .info-band-logo {
-                height: clamp(40px, 7vmin, 56px);
-            }
-
-            .error-message {
-                bottom: calc(10vh + env(safe-area-inset-bottom, 0px));
+                height: clamp(42px, 6.4vmin, 54px)
             }
 
             .track-switch {
-                width: clamp(180px, 26vmin, 230px);
-                height: clamp(38px, 5.5vmin, 46px);
+                width: clamp(176px, 24vmin, 220px);
+                height: clamp(38px, 5.2vmin, 44px)
             }
 
             .track-switch .track-label {
-                font-size: clamp(11px, 1.6vmin, 14px);
+                font-size: clamp(11px, 1.5vmin, 13px)
             }
 
             .chapters-row {
-                width: clamp(180px, 26vmin, 230px);
+                width: clamp(176px, 24vmin, 220px)
+            }
+
+            .error-message {
+                bottom: calc(8vh + env(safe-area-inset-bottom, 0px))
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="progress-frame" id="progressFrame">
-        <svg id="progressSvg" preserveAspectRatio="none">
+    <div class="progress-frame" id="progressFrame"><svg id="progressSvg" preserveAspectRatio="none">
             <path id="progressPath" class="progress-stroke" />
-        </svg>
-    </div>
-
+        </svg></div>
     <div class="top-bar">
-        <div class="info-button-wrapper">
-            <button class="info-button" id="infoButton">i</button>
-            <span class="info-badge" id="infoBadge"></span>
-        </div>
+        <div class="info-button-wrapper"><button class="info-button" id="infoButton">i</button><span class="info-badge"
+                id="infoBadge"></span></div>
     </div>
-
     <div class="container">
-        <div class="image-wrapper">
-            <img src="images/opera_44.png" alt="Cover" class="cover-image" id="coverImage" loading="lazy">
-        </div>
-
-        <div class="controls-group">
-            <button class="audio-control paused loading" id="audioControl" aria-label="Riproduci traccia">
-                <span class="icon-morph" aria-hidden="true">
-                    <span class="bar bar-left"></span>
-                    <span class="bar bar-right"></span>
-                </span>
-                <span class="loader"></span>
-            </button>
-
+        <div class="image-wrapper"><img src="images/opera_44.png" alt="Cover" class="cover-image" id="coverImage"
+                loading="lazy"></div>
+        <div class="controls-group"><button class="audio-control paused loading" id="audioControl"
+                aria-label="Riproduci traccia"><span class="icon-morph" aria-hidden="true"><span
+                        class="bar bar-left"></span><span class="bar bar-right"></span></span><span
+                    class="loader"></span></button>
             <div class="track-switch" id="trackSwitch" role="button" tabindex="0" aria-label="Cambia traccia audio">
-                <div class="switch-thumb" id="switchThumb"></div>
-                <span class="track-label label-full">Brano</span>
-                <span class="track-label label-mindfulness">Mindfulness</span>
+                <div class="switch-thumb"></div><span class="track-label label-full">Brano</span><span
+                    class="track-label label-mindfulness">Mindfulness</span>
             </div>
-
             <div class="chapters-row" id="chaptersRow"></div>
         </div>
     </div>
-
     <div class="info-panel" id="infoPanel">
         <h2 id="artworkTitle">Lo Sciamano</h2>
         <p><strong>Artista:</strong> Elisa Aiassa</p>
         <p><strong>Durata:</strong> <span id="audioDuration">--:--</span></p>
-
         <hr class="info-divider">
-
         <h3>Musiche di</h3>
-        <div class="info-band-logos">
-            <img src="images/logo_1.png" alt="Armonie di Gran Classe 1" class="info-band-logo force-white">
-            <img src="images/logo_2.png" alt="Armonie di Gran Classe 2" class="info-band-logo">
-        </div>
+        <div class="info-band-logos"><img src="images/logo_1.png" alt="Armonie di Gran Classe 1"
+                class="info-band-logo force-white"><img src="images/logo_2.png" alt="Armonie di Gran Classe 2"
+                class="info-band-logo"></div>
         <p>Trio Armonie di Gran Classe</p>
         <div class="social-links">
-            <a href="https://www.instagram.com/_armoniedigranclasse_/" target="_blank" rel="noopener" aria-label="Instagram Armonie di Gran Classe">
-                <svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.97.24 2.43.4a4.9 4.9 0 0 1 1.77 1.15 4.9 4.9 0 0 1 1.15 1.77c.16.46.35 1.26.4 2.43.07 1.25.07 1.65.07 4.85s0 3.6-.07 4.85c-.05 1.17-.24 1.97-.4 2.43a4.9 4.9 0 0 1-1.15 1.77 4.9 4.9 0 0 1-1.77 1.15c-.46.16-1.26.35-2.43.4-1.25.07-1.65.07-4.85.07s-3.6 0-4.85-.07c-1.17-.05-1.97-.24-2.43-.4a4.9 4.9 0 0 1-1.77-1.15 4.9 4.9 0 0 1-1.15-1.77c-.16-.46-.35-1.26-.4-2.43C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.85c.05-1.17.24-1.97.4-2.43a4.9 4.9 0 0 1 1.15-1.77 4.9 4.9 0 0 1 1.77-1.15c.46-.16 1.26-.35 2.43-.4C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.15 0-3.52 0-4.76.07-1.02.05-1.58.21-1.95.35-.49.19-.84.42-1.2.79-.37.36-.6.71-.79 1.2-.14.37-.3.93-.35 1.95C2.88 8.48 2.88 8.85 2.88 12s0 3.52.07 4.76c.05 1.02.21 1.58.35 1.95.19.49.42.84.79 1.2.36.37.71.6 1.2.79.37.14.93.3 1.95.35 1.24.07 1.61.07 4.76.07s3.52 0 4.76-.07c1.02-.05 1.58-.21 1.95-.35.49-.19.84-.42 1.2-.79.37-.36.6-.71.79-1.2.14-.37.3-.93.35-1.95.07-1.24.07-1.61.07-4.76s0-3.52-.07-4.76c-.05-1.02-.21-1.58-.35-1.95a3.1 3.1 0 0 0-.79-1.2 3.1 3.1 0 0 0-1.2-.79c-.37-.14-.93-.3-1.95-.35C15.52 4 15.15 4 12 4zm0 3.4a4.6 4.6 0 1 1 0 9.2 4.6 4.6 0 0 1 0-9.2zm0 1.8a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zm5.85-2.03a1.08 1.08 0 1 1-2.15 0 1.08 1.08 0 0 1 2.15 0z"/></svg>
+            <a href="https://www.instagram.com/_armoniedigranclasse_/" target="_blank" rel="noopener"
+                aria-label="Instagram Armonie di Gran Classe">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                        d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.97.24 2.43.4a4.9 4.9 0 0 1 1.77 1.15 4.9 4.9 0 0 1 1.15 1.77c.16.46.35 1.26.4 2.43.07 1.25.07 1.65.07 4.85s0 3.6-.07 4.85c-.05 1.17-.24 1.97-.4 2.43a4.9 4.9 0 0 1-1.15 1.77 4.9 4.9 0 0 1-1.77 1.15c-.46.16-1.26.35-2.43.4-1.25.07-1.65.07-4.85.07s-3.6 0-4.85-.07c-1.17-.05-1.97-.24-2.43-.4a4.9 4.9 0 0 1-1.77-1.15 4.9 4.9 0 0 1-1.15-1.77c-.16-.46-.35-1.26-.4-2.43C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.85c.05-1.17.24-1.97.4-2.43a4.9 4.9 0 0 1 1.15-1.77 4.9 4.9 0 0 1 1.77-1.15c.46-.16 1.26-.35 2.43-.4C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.15 0-3.52 0-4.76.07-1.02.05-1.58.21-1.95.35-.49.19-.84.42-1.2.79-.37.36-.6.71-.79 1.2-.14.37-.3.93-.35 1.95C2.88 8.48 2.88 8.85 2.88 12s0 3.52.07 4.76c.05 1.02.21 1.58.35 1.95.19.49.42.84.79 1.2.36.37.71.6 1.2.79.37.14.93.3 1.95.35 1.24.07 1.61.07 4.76.07s3.52 0 4.76-.07c1.02-.05 1.58-.21 1.95-.35.49-.19.84-.42 1.2-.79.37-.36.6-.71.79-1.2.14-.37.3-.93.35-1.95.07-1.24.07-1.61.07-4.76s0-3.52-.07-4.76c-.05-1.02-.21-1.58-.35-1.95a3.1 3.1 0 0 0-.79-1.2 3.1 3.1 0 0 0-1.2-.79c-.37-.14-.93-.3-1.95-.35C15.52 4 15.15 4 12 4zm0 3.4a4.6 4.6 0 1 1 0 9.2 4.6 4.6 0 0 1 0-9.2zm0 1.8a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zm5.85-2.03a1.08 1.08 0 1 1-2.15 0 1.08 1.08 0 0 1 2.15 0z" />
+                </svg>
             </a>
-            <a href="https://www.facebook.com/profile.php?id=61569347360024" target="_blank" rel="noopener" aria-label="Facebook Armonie di Gran Classe">
-                <svg viewBox="0 0 24 24"><path d="M13.5 21v-7.9h2.65l.4-3.08H13.5V8.05c0-.89.25-1.5 1.52-1.5h1.63V3.8c-.28-.04-1.24-.12-2.36-.12-2.33 0-3.93 1.42-3.93 4.03v2.25H7.7v3.08h2.66V21h3.14z"/></svg>
+            <a href="https://www.facebook.com/profile.php?id=61569347360024" target="_blank" rel="noopener"
+                aria-label="Facebook Armonie di Gran Classe">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                        d="M13.5 21v-7.9h2.65l.4-3.08H13.5V8.05c0-.89.25-1.5 1.52-1.5h1.63V3.8c-.28-.04-1.24-.12-2.36-.12-2.33 0-3.93 1.42-3.93 4.03v2.25H7.7v3.08h2.66V21h3.14z" />
+                </svg>
             </a>
         </div>
-        <p style="margin-top: 10px;">
-            <a href="https://www.instagram.com/stories/highlights/18058294064278404/" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.65); font-size: 13px;">Cos'è Armonie di Emozioni →</a>
-        </p>
     </div>
-
-    <div class="error-message" id="errorMessage">
-        Errore nel caricamento dell'audio
-    </div>
-
+    <div class="error-message" id="errorMessage">Errore nel caricamento dell'audio</div>
     <div class="glow-container">
         <div class="glow glow-1"></div>
         <div class="glow glow-2"></div>
         <div class="glow glow-3"></div>
-    </div>
-
-    <audio id="audioPlayerFull" preload="auto" loop>
+    </div><audio id="audioPlayerFull" preload="auto" loop>
         <source src="audio/fourtyfour.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="audioPlayerMindfulness" preload="auto" loop>
+    </audio><audio id="audioPlayerMindfulness" preload="auto" loop>
         <source src="audio/fourtyfour_mindfulness.mp3" type="audio/mpeg">
     </audio>
-
-    <script>
-        const ARTWORK_CONFIG = {
-            title: "Lo Sciamano",
-            imageSrcFull: "images/opera_44.png",
-            imageSrcMindfulness: "images/opera_44_mindfulness.png",
-            exhibition: "L'alfabeto numerico dell'esistenza",
-            mindfulnessChapters: [
-                { label: "Intro", time: 0 },
-                { label: "Mindfulness", time: 120 }
-            ]
-        };
-
-        const audioPlayerFull = document.getElementById('audioPlayerFull');
-        const audioPlayerMindfulness = document.getElementById('audioPlayerMindfulness');
-        const audioControl = document.getElementById('audioControl');
-        const coverImage = document.getElementById('coverImage');
-        const progressFrame = document.getElementById('progressFrame');
-        const progressPath = document.getElementById('progressPath');
-        const progressSvg = document.getElementById('progressSvg');
-        const infoButton = document.getElementById('infoButton');
-        const infoBadge = document.getElementById('infoBadge');
-        const infoPanel = document.getElementById('infoPanel');
-        const errorMessage = document.getElementById('errorMessage');
-        const trackSwitch = document.getElementById('trackSwitch');
-        const chaptersRow = document.getElementById('chaptersRow');
-
-        let colorsCache = null;
-        let infoPanelVisible = false;
-        let pathLength = 0;
-
-        let currentMode = 'full';
-        let audio = audioPlayerFull;
-
-        const BADGE_DISMISSED_KEY = 'athanor_info_badge_dismissed';
-        if (!localStorage.getItem(BADGE_DISMISSED_KEY)) {
-            requestAnimationFrame(() => {
-                infoBadge.classList.add('visible');
-                setTimeout(() => infoBadge.classList.add('pulsing'), 600);
-            });
-        }
-
-        function dismissInfoBadge() {
-            infoBadge.classList.remove('visible', 'pulsing');
-            localStorage.setItem(BADGE_DISMISSED_KEY, '1');
-        }
-
-        const preloadedImages = {};
-        function preloadImage(src) {
-            if (preloadedImages[src]) return;
-            const img = new Image();
-            img.src = src;
-            preloadedImages[src] = img;
-        }
-        preloadImage(ARTWORK_CONFIG.imageSrcMindfulness);
-
-        function updateProgressPath() {
-            const rect = progressFrame.getBoundingClientRect();
-            const w = rect.width;
-            const h = rect.height;
-            if (w === 0 || h === 0) return;
-
-            const margin = 0;
-
-            progressSvg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-            progressPath.setAttribute('d',
-                `M ${margin},${margin} L ${w - margin},${margin} L ${w - margin},${h - margin} L ${margin},${h - margin} L ${margin},${margin}`
-            );
-
-            pathLength = progressPath.getTotalLength();
-
-            if (audio && audio.duration) {
-                const progress = audio.currentTime / audio.duration;
-                progressPath.style.strokeDasharray = `${pathLength * progress} ${pathLength}`;
-            } else {
-                progressPath.style.strokeDasharray = `0 ${pathLength}`;
-            }
-        }
-
-        if ('ResizeObserver' in window) {
-            const ro = new ResizeObserver(() => updateProgressPath());
-            ro.observe(progressFrame);
-        } else {
-            window.addEventListener('resize', updateProgressPath);
-        }
-
-        window.addEventListener('load', updateProgressPath);
-        window.addEventListener('orientationchange', () => {
-            setTimeout(() => {
-                updateProgressPath();
-
-                document.body.style.display = 'none';
-                document.body.offsetHeight;
-                document.body.style.display = 'flex';
-            }, 100);
-        });
-
-        document.getElementById('artworkTitle').textContent = ARTWORK_CONFIG.title;
-
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: ARTWORK_CONFIG.title,
-                album: ARTWORK_CONFIG.exhibition,
-                artwork: [
-                    { src: ARTWORK_CONFIG.imageSrcFull, sizes: '512x512', type: 'image/jpg' }
-                ]
-            });
-
-            navigator.mediaSession.setActionHandler('play', () => {
-                audio.play();
-            });
-
-            navigator.mediaSession.setActionHandler('pause', () => {
-                audio.pause();
-            });
-        }
-
-        function setButtonState(isPlaying) {
-            if (isPlaying) {
-                audioControl.classList.remove('paused');
-                audioControl.setAttribute('aria-label', 'Metti in pausa');
-            } else {
-                audioControl.classList.add('paused');
-                audioControl.setAttribute('aria-label', 'Riproduci traccia');
-            }
-        }
-
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.add('visible');
-            setTimeout(() => {
-                errorMessage.classList.remove('visible');
-            }, 4000);
-        }
-
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        function createRipple(event) {
-            const ripple = document.createElement('span');
-            const button = audioControl;
-            const rect = button.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = rect.width / 2 - size / 2;
-            const y = rect.height / 2 - size / 2;
-
-            ripple.style.width = ripple.style.height = size + 'px';
-            ripple.style.left = x + 'px';
-            ripple.style.top = y + 'px';
-            ripple.classList.add('ripple');
-
-            button.appendChild(ripple);
-
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
-        }
-
-        function bindAudioEvents(audioEl) {
-            audioEl.addEventListener('loadedmetadata', () => {
-                if (audioEl === audio) {
-                    audioControl.classList.remove('loading');
-                    document.getElementById('audioDuration').textContent = formatTime(audioEl.duration);
-                }
-            });
-
-            audioEl.addEventListener('canplay', () => {
-                if (audioEl === audio) audioControl.classList.remove('loading');
-            });
-
-            audioEl.addEventListener('waiting', () => {
-                if (audioEl === audio) audioControl.classList.add('loading');
-            });
-
-            audioEl.addEventListener('playing', () => {
-                if (audioEl === audio) {
-                    audioControl.classList.remove('loading');
-                    progressFrame.classList.add('visible');
-                }
-            });
-
-            audioEl.addEventListener('error', () => {
-                if (audioEl !== audio) return;
-                audioControl.classList.remove('loading');
-                let errorMsg = 'Errore nel caricamento dell\'audio';
-
-                if (audioEl.error) {
-                    switch (audioEl.error.code) {
-                        case MediaError.MEDIA_ERR_ABORTED:
-                            errorMsg = 'Caricamento audio interrotto';
-                            break;
-                        case MediaError.MEDIA_ERR_NETWORK:
-                            errorMsg = 'Errore di rete';
-                            break;
-                        case MediaError.MEDIA_ERR_DECODE:
-                            errorMsg = 'Errore decodifica audio';
-                            break;
-                        case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
-                            errorMsg = 'Formato audio non supportato';
-                            break;
-                    }
-                }
-
-                showError(errorMsg);
-            });
-
-            audioEl.addEventListener('play', () => {
-                if (audioEl !== audio) return;
-                audioControl.classList.remove('loading');
-                progressFrame.classList.add('visible');
-                startTime = null;
-                if (!rafId) {
-                    rafId = requestAnimationFrame(smoothUpdateProgress);
-                }
-            });
-
-            audioEl.addEventListener('pause', () => {
-                if (audioEl !== audio) return;
-                if (rafId) {
-                    cancelAnimationFrame(rafId);
-                    rafId = null;
-                    startTime = null;
-                }
-            });
-
-            audioEl.addEventListener('ended', () => {
-                if (audioEl !== audio) return;
-                if (rafId) {
-                    cancelAnimationFrame(rafId);
-                    rafId = null;
-                    startTime = null;
-                }
-                audioEl.currentTime = 0;
-                audioEl.play();
-            });
-
-            audioEl.addEventListener('seeking', () => {
-                if (audioEl === audio) startTime = null;
-            });
-        }
-
-        bindAudioEvents(audioPlayerFull);
-        bindAudioEvents(audioPlayerMindfulness);
-
-        let rafId = null;
-        let startTime = null;
-
-        function smoothUpdateProgress(timestamp) {
-            if (!startTime) startTime = timestamp;
-
-            if (audio.duration && pathLength > 0 && !audio.paused) {
-                const progress = audio.currentTime / audio.duration;
-
-                const targetDash = pathLength * progress;
-                const currentDashArray = progressPath.style.strokeDasharray.split(' ')[0];
-                const currentDash = parseFloat(currentDashArray) || 0;
-
-                const smoothDash = currentDash + (targetDash - currentDash) * 0.3;
-
-                progressPath.style.strokeDasharray = `${smoothDash} ${pathLength}`;
-
-                rafId = requestAnimationFrame(smoothUpdateProgress);
-            }
-        }
-
-        function resetProgressBar() {
-            if (rafId) {
-                cancelAnimationFrame(rafId);
-                rafId = null;
-            }
-            startTime = null;
-            progressPath.style.strokeDasharray = `0 ${pathLength}`;
-        }
-
-        audioControl.addEventListener('click', async (e) => {
-            createRipple(e);
-
-            if (audio.paused) {
-                try {
-                    await audio.play();
-                    setButtonState(true);
-                } catch (error) {
-                    console.warn('Riproduzione bloccata:', error);
-                    showError('Impossibile riprodurre l\'audio');
-                }
-            } else {
-                audio.pause();
-                setButtonState(false);
-            }
-        });
-
-        function triggerImageFlip(mode) {
-            const newSrc = mode === 'full' ? ARTWORK_CONFIG.imageSrcFull : ARTWORK_CONFIG.imageSrcMindfulness;
-            coverImage.classList.add('flipping');
-
-            setTimeout(() => {
-                coverImage.src = newSrc;
-            }, 300);
-
-            setTimeout(() => {
-                coverImage.classList.remove('flipping');
-            }, 600);
-        }
-
-        function buildChapters() {
-            chaptersRow.innerHTML = '';
-            ARTWORK_CONFIG.mindfulnessChapters.forEach((chapter, idx) => {
-                const chip = document.createElement('div');
-                chip.className = 'chapter-chip';
-                chip.textContent = chapter.label;
-                chip.dataset.index = idx;
-                chip.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    audioPlayerMindfulness.currentTime = chapter.time;
-                    updateActiveChapter();
-                    if (audioPlayerMindfulness.paused && currentMode === 'mindfulness') {
-                        audioPlayerMindfulness.play().then(() => setButtonState(true)).catch(() => {});
-                    }
-                });
-                chaptersRow.appendChild(chip);
-            });
-        }
-        buildChapters();
-
-        function updateActiveChapter() {
-            if (currentMode !== 'mindfulness') return;
-            const t = audioPlayerMindfulness.currentTime;
-            const chapters = ARTWORK_CONFIG.mindfulnessChapters;
-            let activeIdx = 0;
-            for (let i = 0; i < chapters.length; i++) {
-                if (t >= chapters[i].time) activeIdx = i;
-            }
-            [...chaptersRow.children].forEach((chip, i) => {
-                chip.classList.toggle('active', i === activeIdx);
-            });
-        }
-
-        audioPlayerMindfulness.addEventListener('timeupdate', updateActiveChapter);
-
-        function toggleChaptersVisibility() {
-            chaptersRow.classList.toggle('visible', currentMode === 'mindfulness');
-            if (currentMode === 'mindfulness') updateActiveChapter();
-        }
-
-        function switchTrack() {
-            const wasPlaying = !audio.paused;
-            audio.pause();
-
-            currentMode = currentMode === 'full' ? 'mindfulness' : 'full';
-            audio = currentMode === 'full' ? audioPlayerFull : audioPlayerMindfulness;
-            audio.currentTime = 0;
-            resetProgressBar();
-
-            trackSwitch.classList.toggle('mindfulness', currentMode === 'mindfulness');
-            toggleChaptersVisibility();
-            triggerImageFlip(currentMode);
-
-            preloadImage(currentMode === 'full' ? ARTWORK_CONFIG.imageSrcMindfulness : ARTWORK_CONFIG.imageSrcFull);
-
-            if (audio.duration) {
-                document.getElementById('audioDuration').textContent = formatTime(audio.duration);
-            }
-
-            if (wasPlaying) {
-                audio.play().then(() => setButtonState(true)).catch(() => {
-                    showError('Impossibile riprodurre l\'audio');
-                    setButtonState(false);
-                });
-            } else {
-                setButtonState(false);
-            }
-        }
-
-        trackSwitch.addEventListener('click', switchTrack);
-        trackSwitch.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                switchTrack();
-            }
-        });
-
-        infoButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            infoPanelVisible = !infoPanelVisible;
-            infoPanel.classList.toggle('visible', infoPanelVisible);
-            dismissInfoBadge();
-        });
-
-        let touchTimeout;
-
-        coverImage.addEventListener('touchstart', () => {
-            coverImage.classList.add('pressed');
-
-            touchTimeout = setTimeout(() => {
-                coverImage.classList.remove('pressed');
-            }, 150);
-        });
-
-        coverImage.addEventListener('touchend', () => {
-            clearTimeout(touchTimeout);
-            setTimeout(() => {
-                coverImage.classList.remove('pressed');
-            }, 100);
-        });
-
-        coverImage.addEventListener('touchcancel', () => {
-            clearTimeout(touchTimeout);
-            coverImage.classList.remove('pressed');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (infoPanelVisible && !infoPanel.contains(e.target) && e.target !== infoButton) {
-                infoPanelVisible = false;
-                infoPanel.classList.remove('visible');
-            }
-        });
-
-        function extractColors() {
-            if (colorsCache) {
-                applyColors(colorsCache);
-                return;
-            }
-
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            const img = new Image();
-            img.crossOrigin = 'Anonymous';
-            img.src = coverImage.src;
-
-            img.onload = () => {
-                canvas.width = img.width;
-                canvas.height = img.height;
-                ctx.drawImage(img, 0, 0);
-
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const colors = getProminentColors(imageData);
-
-                colorsCache = colors;
-                applyColors(colors);
-            };
-        }
-
-        function applyColors(colors) {
-            document.documentElement.style.setProperty('--color-1', colors[0]);
-            document.documentElement.style.setProperty('--color-2', colors[1]);
-            document.documentElement.style.setProperty('--color-3', colors[2]);
-        }
-
-        function getProminentColors(imageData) {
-            const data = imageData.data;
-            const colorMap = {};
-
-            for (let i = 0; i < data.length; i += 80) {
-                const r = Math.round(data[i] / 30) * 30;
-                const g = Math.round(data[i + 1] / 30) * 30;
-                const b = Math.round(data[i + 2] / 30) * 30;
-                const rgb = `rgb(${r},${g},${b})`;
-                colorMap[rgb] = (colorMap[rgb] || 0) + 1;
-            }
-
-            const sorted = Object.entries(colorMap)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 3)
-                .map(entry => entry[0]);
-
-            return sorted.length >= 3 ? sorted : ['#ff6b6b', '#4ecdc4', '#95e1d3'];
-        }
-
-        coverImage.addEventListener('load', () => {
-            coverImage.classList.add('loaded');
-            extractColors();
-        });
-
-        coverImage.addEventListener('error', () => {
-            showError('Errore nel caricamento dell\'immagine');
-        });
-
-        if (coverImage.complete) {
-            coverImage.classList.add('loaded');
-            extractColors();
-        }
-    </script>
+    <script>const ARTWORK_CONFIG = { title: "Lo Sciamano", imageSrcFull: "images/opera_44.png", imageSrcMindfulness: "images/opera_44_mindfulness.png", exhibition: "L'alfabeto numerico dell'esistenza", mindfulnessChapters: [{ label: "Intro", time: 0 }, { label: "Mindfulness", time: 120 }] }; const audioPlayerFull = document.getElementById('audioPlayerFull'), audioPlayerMindfulness = document.getElementById('audioPlayerMindfulness'), audioControl = document.getElementById('audioControl'), coverImage = document.getElementById('coverImage'), progressFrame = document.getElementById('progressFrame'), progressPath = document.getElementById('progressPath'), progressSvg = document.getElementById('progressSvg'), infoButton = document.getElementById('infoButton'), infoBadge = document.getElementById('infoBadge'), infoPanel = document.getElementById('infoPanel'), errorMessage = document.getElementById('errorMessage'), trackSwitch = document.getElementById('trackSwitch'), chaptersRow = document.getElementById('chaptersRow'); let currentMode = 'full', audio = audioPlayerFull, pathLength = 0, rafId = null, infoPanelVisible = false; function updateProgressPath() { const r = progressFrame.getBoundingClientRect(); if (!r.width || !r.height) return; progressSvg.setAttribute('viewBox', `0 0 ${r.width} ${r.height}`); progressPath.setAttribute('d', `M 0,0 L ${r.width},0 L ${r.width},${r.height} L 0,${r.height} L 0,0`); pathLength = progressPath.getTotalLength(); const p = audio.duration ? audio.currentTime / audio.duration : 0; progressPath.style.strokeDasharray = `${pathLength * p} ${pathLength}` } window.addEventListener('load', updateProgressPath); window.addEventListener('resize', updateProgressPath); window.addEventListener('orientationchange', () => setTimeout(updateProgressPath, 120)); document.getElementById('artworkTitle').textContent = ARTWORK_CONFIG.title; function setButtonState(on) { audioControl.classList.toggle('paused', !on); audioControl.classList.toggle('loading', false) } function formatTime(s) { const m = Math.floor(s / 60), ss = Math.floor(s % 60); return `${m}:${String(ss).padStart(2, '0')}` } function createRipple() { const r = audioControl.getBoundingClientRect(); const s = document.createElement('span'); const size = Math.max(r.width, r.height); s.className = 'ripple'; s.style.width = s.style.height = size + 'px'; s.style.left = r.width / 2 - size / 2 + 'px'; s.style.top = r.height / 2 - size / 2 + 'px'; audioControl.appendChild(s); setTimeout(() => s.remove(), 600) } async function togglePlay() { createRipple(); if (audio.paused) { try { await audio.play(); setButtonState(true) } catch (e) { errorMessage.classList.add('visible'); setTimeout(() => errorMessage.classList.remove('visible'), 3000) } } else { audio.pause(); setButtonState(false) } } function bindAudioEvents(a) { a.addEventListener('loadedmetadata', () => { if (a === audio) { document.getElementById('audioDuration').textContent = formatTime(a.duration); audioControl.classList.remove('loading') } }); a.addEventListener('play', () => { if (a === audio) { setButtonState(true); cancelAnimationFrame(rafId); const step = () => { if (!audio.paused && audio.duration) { const p = audio.currentTime / audio.duration; progressPath.style.strokeDasharray = `${pathLength * p} ${pathLength}`; rafId = requestAnimationFrame(step) } }; progressFrame.classList.add('visible'); rafId = requestAnimationFrame(step) } }); a.addEventListener('pause', () => { if (a === audio) { setButtonState(false); cancelAnimationFrame(rafId) } }) } bindAudioEvents(audioPlayerFull); bindAudioEvents(audioPlayerMindfulness); audioControl.addEventListener('click', togglePlay); ARTWORK_CONFIG.mindfulnessChapters.forEach((c, i) => { const chip = document.createElement('div'); chip.className = 'chapter-chip'; chip.textContent = c.label; chip.addEventListener('click', e => { e.stopPropagation(); audioPlayerMindfulness.currentTime = c.time;[...chaptersRow.children].forEach((n, j) => n.classList.toggle('active', i === j)) }); chaptersRow.appendChild(chip) }); function switchTrack() { const wasPlaying = !audio.paused; audio.pause(); currentMode = currentMode === 'full' ? 'mindfulness' : 'full'; audio = currentMode === 'full' ? audioPlayerFull : audioPlayerMindfulness; trackSwitch.classList.toggle('mindfulness', currentMode === 'mindfulness'); chaptersRow.classList.toggle('visible', currentMode === 'mindfulness'); coverImage.classList.add('flipping'); setTimeout(() => { coverImage.src = currentMode === 'full' ? ARTWORK_CONFIG.imageSrcFull : ARTWORK_CONFIG.imageSrcMindfulness }, 300); setTimeout(() => coverImage.classList.remove('flipping'), 600); if (wasPlaying) audio.play() } trackSwitch.addEventListener('click', switchTrack); trackSwitch.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchTrack() } }); infoButton.addEventListener('click', e => { e.stopPropagation(); infoPanelVisible = !infoPanelVisible; infoPanel.classList.toggle('visible', infoPanelVisible) }); document.addEventListener('click', e => { if (infoPanelVisible && !infoPanel.contains(e.target) && e.target !== infoButton) { infoPanelVisible = false; infoPanel.classList.remove('visible') } }); coverImage.addEventListener('load', () => coverImage.classList.add('loaded')); if (coverImage.complete) coverImage.classList.add('loaded');</script>
 </body>
 
 </html>

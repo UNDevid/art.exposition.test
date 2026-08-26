@@ -626,6 +626,22 @@
             border-color: rgba(255, 255, 255, .9)
         }
 
+        .chapter-chip {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            outline: none;
+        }
+
+        .chapter-chip:focus,
+        .chapter-chip:focus-visible,
+        .chapter-chip:active {
+            outline: none;
+            box-shadow: none;
+            background: rgba(255, 255, 255, .08);
+        }
+
         @media (max-width:768px) and (orientation:portrait) {
             .container {
                 padding-top: clamp(70px, 12vh, 100px);
